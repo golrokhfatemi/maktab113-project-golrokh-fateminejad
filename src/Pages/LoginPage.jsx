@@ -1,9 +1,11 @@
 import { Button, Input, InputGroup, InputRightElement, Stack } from "@chakra-ui/react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+  const navigate = useNavigate();
 
   return (
     <div className="bg-cover bg-center"  style={{
@@ -49,7 +51,7 @@ export default function LoginPage() {
           }
           Login
         </button> */}
-          <Button colorScheme="teal" size="md">
+          <Button colorScheme="teal" size="md" onClick={navigate('/panel-admin')}>
             {/* {
             isPending ? "Loading..." : "Login"
           } */}

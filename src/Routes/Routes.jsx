@@ -4,6 +4,7 @@ import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import AboutUs from "../Pages/AboutUs";
 import ContactUsPage from "./ContactUsPage";
+import PanelAdminPage from "../Pages/PanelAdminPage";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +22,13 @@ const router = createBrowserRouter([
       {
         path :"/contactus",
         element :<ContactUsPage/>
+      },
+      {
+        path :"/panel-admin",
+        element :<PanelAdminPage/>
       }
-    ]
+    ],
+    
   },
   {
     path:"/login",
