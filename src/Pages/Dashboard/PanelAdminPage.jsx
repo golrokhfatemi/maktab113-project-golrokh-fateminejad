@@ -3,6 +3,9 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel, Table, Thead, Tbody, Tr, Th, T
 import { useState } from 'react';
 import { CiEdit } from 'react-icons/ci';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
+import { useGetProducts } from '../../Hook/useGetProducts';
+import { useQueryClient } from 'react-query';
+
 
 
 export default function PanelAdminPage() {
@@ -10,6 +13,11 @@ export default function PanelAdminPage() {
     delivered: false,
     inProcess: false,
   });
+  const qc = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const {data} = useGetProducts(currentPage , itemsPerPage)
+console.log(data);
 
   const orders = [
     { id: 12345, customer: 'ali ahmadi', status: 'Delivered' },
@@ -55,7 +63,24 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
+                {
+                  data?.data?.products.map((item) =>(
+                    
+                    
+                    <Tr key={item.id}>
+                      <Td>{item.thumbnail}</Td>
+                      <Td>{item.slugname}</Td>
+                      <Td>{item.category.name} , {item.subcategory.name}</Td>
+                      <Td>
+                      <Box className='flex flex-row gap-4'>
+                      <CiEdit className='text-2xl'/>
+                      <MdOutlineDeleteOutline className='text-2xl'/>
+                      </Box>
+                      </Td>
+                    </Tr>
+                  ))
+                }
+                {/* <Tr>
                   <Td>Image 1</Td>
                   <Td>Product 1</Td>
                   <Td>Category 1</Td>
@@ -65,7 +90,7 @@ export default function PanelAdminPage() {
                   <MdOutlineDeleteOutline className='text-2xl'/>
                   </Box>
                   </Td>
-                </Tr>
+                </Tr> */}
                 <Tr>
                   <Td>Image 2</Td>
                   <Td>Product 2</Td>

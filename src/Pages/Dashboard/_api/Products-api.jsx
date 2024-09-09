@@ -6,6 +6,5 @@ export const getProducts = async(page = 1 , itemsPerPage = 2) => {
     const res = await httpRequest.get(url)
     console.log(res.data);
     return res.data
-    
 
 }
