@@ -4,7 +4,7 @@ import HomePage from "../Pages/HomePage";
 import LoginPage from "../Pages/LoginPage";
 import AboutUs from "../Pages/AboutUs";
 import ContactUsPage from "./ContactUsPage";
-import PanelAdminPage from "../Pages/PanelAdminPage";
+import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
 
 const router = createBrowserRouter([
   {

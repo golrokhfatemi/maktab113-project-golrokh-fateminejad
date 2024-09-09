@@ -11,8 +11,20 @@ import {
   DrawerCloseButton,
   useDisclosure,
   Link,
+  Text,
+  Box,
+  IconButton,
+  Collapse,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
 } from '@chakra-ui/react'
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
 
 
@@ -20,6 +32,8 @@ import React from 'react';
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -41,6 +55,7 @@ export default function Header() {
   //     document.removeEventListener('mousedown', handleClickOutside);
   //   };
   // }, []);
+  const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
   return (
     <div>
         <header className="flex justify-between m-5">
@@ -51,8 +66,28 @@ export default function Header() {
             
             <div className='flex flex-row gap-4'>
             
-              <MdOutlinePhoneInTalk className='text-2xl'/>
-              <MdOutlineMail className='text-2xl'/>
+            <Popover
+            isOpen={isPopoverOpen}
+            onOpen={() => setIsPopoverOpen(true)}
+            onClose={() => setIsPopoverOpen(false)}
+            placement="right-end"
+          >
+            <PopoverTrigger>
+              <MdOutlinePhoneInTalk className='text-2xl cursor-pointer' />
+            </PopoverTrigger>
+            <PopoverContent bg="gray.800" color="white" p={4}>
+              <PopoverArrow />
+              <PopoverCloseButton />
+              <PopoverHeader fontWeight="bold">Contact Information</PopoverHeader>
+              <PopoverBody>
+                <Box>
+                  <p>Phone: +1234567890</p>
+                  <p>Email: contact@example.com</p>
+                </Box>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+              <MdOutlineMail className='text-2xl cursor-pointer'/>
             </div>
         </header>
         <Drawer
@@ -62,20 +97,53 @@ export default function Header() {
         finalFocusRef={btnRef}
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg="#5d877d" color="white">
           <DrawerCloseButton />
           
 
-          <DrawerBody className='flex flex-col gap-6 justify-start mt-16 '>
+          {/* <DrawerBody className='flex flex-col gap-6 justify-start mt-16 '>
             <Link>HOME</Link>
             <Link>PRODUCTS</Link>
+            <Text fontSize="sm" color="gray.500">Jewelry, Watches</Text>
             <Link>ABOUT US</Link>
             <Link>CONTACT US</Link>
             
+          </DrawerBody> */}
+          <DrawerBody className='flex flex-col gap-6 justify-start mt-16'>
+            <Box>
+              <Link href="#" fontSize="lg">HOME</Link>
+            </Box>
+            <Box>
+              <Box display="flex" alignItems="center" onClick={toggleProducts} cursor="pointer">
+                <Link fontSize="lg">PRODUCTS</Link>
+                <IconButton
+                  aria-label="Toggle Products Submenu"
+                  icon={isProductsOpen ? <ChevronUpIcon  boxSize={6} color="white" /> : <ChevronDownIcon  boxSize={6} color="white" />}
+                  variant="link"
+                  ml={2}
+                />
+              </Box>
+              <Collapse in={isProductsOpen}>
+                <Box pl={20}>
+                  <div className='flex flex-col gap-5 pt-6'>
+                  <Link href="#" fontSize="lg">Jewelry</Link>
+                  <Link href="#" fontSize="lg" >Watches</Link>
+                  <Link href="#" fontSize="lg" >Luxury Pen</Link>
+                  <Link href="#" fontSize="lg" >Keychain</Link>
+                  </div>
+                </Box>
+              </Collapse>
+            </Box>
+            <Box>
+              <Link href="#"  fontSize="lg">ABOUT US</Link>
+            </Box>
+            <Box>
+              <Link href="#"  fontSize="lg">CONTACT US</Link>
+            </Box>
           </DrawerBody>
 
           
-        </DrawerContent>
+        </DrawerContent >
       </Drawer>
         {/* {isMenuOpen && (
         <div 
