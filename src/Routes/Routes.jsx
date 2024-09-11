@@ -8,33 +8,34 @@ import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
 
 const router = createBrowserRouter([
   {
-    path :"/",
-    element :<Layout/>,
-    children :[
-      {
-        index : true ,
-        element : <HomePage/>
-      },
-      {
-        path :"/aboutus",
-        element : <AboutUs/>
-      },
-      {
-        path :"/contactus",
-        element :<ContactUsPage/>
-      },
-      {
-        path :"/panel-admin",
-        element :<PanelAdminPage/>
-      }
-    ],
-    
+    path: "/panel-admin",
+    element: <PanelAdminPage />,
   },
   {
-    path:"/login",
-    element:<LoginPage/>
-  }
-])
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: "aboutus",
+        element: <AboutUs />,
+      },
+      {
+        path: "contactus",
+        element: <ContactUsPage />,
+      },
+    ],
+  },
+]);
+  
+
 export const AppRoute = () =>{
   return <RouterProvider router={router}/>
 }

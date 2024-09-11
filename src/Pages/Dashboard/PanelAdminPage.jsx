@@ -5,6 +5,7 @@ import { CiEdit } from 'react-icons/ci';
 import { MdOutlineDeleteOutline } from 'react-icons/md';
 import { useGetProducts } from '../../Hook/useGetProducts';
 import { useQueryClient } from 'react-query';
+import { useGetUsers } from '../../Hook/useGetUsers';
 
 
 
@@ -15,9 +16,11 @@ export default function PanelAdminPage() {
   });
   const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const {data} = useGetProducts(currentPage , itemsPerPage)
-console.log(data);
+  const itemsPerPage = 6;
+  const {data : productsData} = useGetProducts(currentPage , itemsPerPage)
+  const {data : usersData} = useGetUsers(currentPage , itemsPerPage)
+// console.log(data);
+// console.log(data1);
 
   const orders = [
     { id: 12345, customer: 'ali ahmadi', status: 'Delivered' },
@@ -64,11 +67,11 @@ console.log(data);
               </Thead>
               <Tbody>
                 {
-                  data?.data?.products.map((item) =>(
+                  productsData?.data?.products.map((item) =>(
                     
                     
                     <Tr key={item.id}>
-                      <Td>{item.thumbnail}</Td>
+                      {/* <Td><img src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`} alt={item.thumbnail}/></Td> */}
                       <Td>{item.slugname}</Td>
                       <Td>{item.category.name} , {item.subcategory.name}</Td>
                       <Td>
@@ -91,17 +94,7 @@ console.log(data);
                   </Box>
                   </Td>
                 </Tr> */}
-                <Tr>
-                  <Td>Image 2</Td>
-                  <Td>Product 2</Td>
-                  <Td>Category 2</Td>
-                  <Td>
-                  <Box className='flex flex-row gap-4'>
-                  <CiEdit className='text-2xl'/>
-                  <MdOutlineDeleteOutline className='text-2xl'/>
-                  </Box>
-                  </Td>
-                </Tr>
+                
               </Tbody>
             </Table>
           </TabPanel>
@@ -115,16 +108,17 @@ console.log(data);
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>Item 1</Td>
-                  <Td>1000$</Td>
-                  <Td>100</Td>
+                {
+                  productsData?.data?.products.map((item) =>(
+                    <Tr key={item.id}>
+                  <Td>{item.slugname}</Td>
+                  <Td>{item.price}$</Td>
+                  <Td>{item.quantity}</Td>
                 </Tr>
-                <Tr>
-                  <Td>Item 2</Td>
-                  <Td>2000$</Td>
-                  <Td>50</Td>
-                </Tr>
+                  ))
+                }
+                
+               
               </Tbody>
             </Table>
           </TabPanel>
@@ -153,18 +147,18 @@ console.log(data);
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>ali ahmadi</Td>
+                {
+                  usersData?.data?.products.map((item) =>(
+                  <Tr key={item.id}>
+                  <Td>{item.user.firstname}</Td>
                   <Td>15000$</Td>
                   <Td>july</Td>
                   <Td>in proccess</Td>
                 </Tr>
-                <Tr>
-                <Td>ali ahmadi</Td>
-                  <Td>15000$</Td>
-                  <Td>july</Td>
-                  <Td>Delivered</Td>
-                </Tr>
+                )
+              )}
+                
+                
               </Tbody>
             </Table>
           </TabPanel>
