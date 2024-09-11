@@ -2,7 +2,7 @@ import { Button, Input, InputGroup, InputRightElement, Stack } from "@chakra-ui/
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+export default function UserLoginPage() {
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function LoginPage() {
           /> */}
           <Stack spacing={5}>
             <Input
-              placeholder="Enter Admin Username"
+              placeholder="Enter  Username"
               size="lg"
               variant="flushed"
             />
@@ -51,7 +51,7 @@ export default function LoginPage() {
           }
           Login
         </button> */}
-          <Button colorScheme="teal" size="md" onClick={navigate('/panel-admin')}>
+          <Button colorScheme="teal" size="md" >
             {/* {
             isPending ? "Loading..." : "Login"
           } */}

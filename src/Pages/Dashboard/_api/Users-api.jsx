@@ -1,8 +1,8 @@
 import httpRequest from "../../../services/http-request";
 
 
-export const getUsers = async(page = 1 , itemsPerPage = 2) => {
-    const url = `/api/users?page=${page}&limit=${itemsPerPage}`
+export const getUsers = async() => {
+    const url = `/api/users`
     const res = await httpRequest.get(url)
     console.log(res.data);
     return res.data

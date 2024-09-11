@@ -1,19 +1,23 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "../layout/Layout";
 import HomePage from "../Pages/HomePage";
-import LoginPage from "../Pages/LoginPage";
+
 import AboutUs from "../Pages/AboutUs";
 import ContactUsPage from "./ContactUsPage";
 import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
+import AdminLoginPage from "../Pages/AdminLoginPage";
+import UserLoginPage from "../Pages/UserLoginPage";
+
+
 
 const router = createBrowserRouter([
   {
-    path: "/panel-admin",
-    element: <PanelAdminPage />,
+    path: "/admin-login",
+    element: <AdminLoginPage />,
   },
   {
-    path: "/login",
-    element: <LoginPage />,
+    path: "/panel-admin",
+    element: <PanelAdminPage/>
   },
   {
     path: "/",
@@ -32,6 +36,10 @@ const router = createBrowserRouter([
         element: <ContactUsPage />,
       },
     ],
+  },
+  {
+    path: "/user-login",
+    element:<UserLoginPage/>,
   },
 ]);
   
