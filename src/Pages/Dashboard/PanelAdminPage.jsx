@@ -1,13 +1,25 @@
-
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Table, Thead, Tbody, Tr, Th, Td, Box, Stack, Checkbox } from '@chakra-ui/react';
-import { useState } from 'react';
-import { CiEdit } from 'react-icons/ci';
-import { MdOutlineDeleteOutline } from 'react-icons/md';
-import { useGetProducts } from '../../Hook/useGetProducts';
-import { useQueryClient } from 'react-query';
-import { useGetUsers } from '../../Hook/useGetUsers';
-
-
+import {
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Box,
+  Stack,
+  Checkbox,
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { CiEdit } from "react-icons/ci";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { useGetProducts } from "../../Hook/useGetProducts";
+import { useQueryClient } from "react-query";
+import { useGetUsers } from "../../Hook/useGetUsers";
 
 export default function PanelAdminPage() {
   const [filters, setFilters] = useState({
@@ -16,35 +28,36 @@ export default function PanelAdminPage() {
   });
   const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-  const {data : productsData} = useGetProducts(currentPage , itemsPerPage)
-  const {data : usersData} = useGetUsers(currentPage , itemsPerPage)
-// console.log(data);
-// console.log(data1);
+  
+  const itemsPerPage = 100;
+  const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
+  const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
+  console.log(usersData);
+  
+  // console.log(data);
+  // console.log(data1);
 
   const orders = [
-    { id: 12345, customer: 'ali ahmadi', status: 'Delivered' },
-    { id: 67890, customer: 'goli fatemi', status: 'In Process' },
-    { id: 54321, customer: 'mahyar adib', status: 'Delivered' },
+    { id: 12345, customer: "ali ahmadi", status: "Delivered" },
+    { id: 67890, customer: "goli fatemi", status: "In Process" },
+    { id: 54321, customer: "mahyar adib", status: "Delivered" },
   ];
 
-
-  const filteredOrders = orders.filter(order => {
-    if (filters.delivered && order.status === 'Delivered') {
+  const filteredOrders = orders.filter((order) => {
+    if (filters.delivered && order.status === "Delivered") {
       return true;
     }
-    if (filters.inProcess && order.status === 'In Process') {
+    if (filters.inProcess && order.status === "In Process") {
       return true;
     }
     if (!filters.delivered && !filters.inProcess) {
-      return true; 
+      return true;
     }
     return false;
-
   });
-    const handleFilterChange = (filter) => {
-      setFilters(prev => ({ ...prev, [filter]: !prev[filter] }));
-    };
+  const handleFilterChange = (filter) => {
+    setFilters((prev) => ({ ...prev, [filter]: !prev[filter] }));
+  };
   return (
     <div className="p-6">
       <Tabs variant="enclosed">
@@ -66,23 +79,31 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                {
-                  productsData?.data?.products.map((item) =>(
-                    
-                    
-                    <Tr key={item.id}>
-                      {/* <Td><img src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`} alt={item.thumbnail}/></Td> */}
-                      <Td>{item.slugname}</Td>
-                      <Td>{item.category.name} , {item.subcategory.name}</Td>
-                      <Td>
-                      <Box className='flex flex-row gap-4'>
-                      <CiEdit className='text-2xl'/>
-                      <MdOutlineDeleteOutline className='text-2xl'/>
+                {productsData?.data?.products.map((item) => (
+                  <Tr key={item.id}>
+                    <Td>
+                      <img
+                        src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
+                        alt={item.thumbnail}
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Td>
+                    <Td>{item.slugname}</Td>
+                    <Td>
+                      {item.category.name} , {item.subcategory.name}
+                    </Td>
+                    <Td>
+                      <Box className="flex flex-row gap-4">
+                        <CiEdit className="text-2xl" />
+                        <MdOutlineDeleteOutline className="text-2xl" />
                       </Box>
-                      </Td>
-                    </Tr>
-                  ))
-                }
+                    </Td>
+                  </Tr>
+                ))}
                 {/* <Tr>
                   <Td>Image 1</Td>
                   <Td>Product 1</Td>
@@ -94,7 +115,6 @@ export default function PanelAdminPage() {
                   </Box>
                   </Td>
                 </Tr> */}
-                
               </Tbody>
             </Table>
           </TabPanel>
@@ -108,31 +128,27 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                {
-                  productsData?.data?.products.map((item) =>(
-                    <Tr key={item.id}>
-                  <Td>{item.slugname}</Td>
-                  <Td>{item.price}$</Td>
-                  <Td>{item.quantity}</Td>
-                </Tr>
-                  ))
-                }
-                
-               
+                {productsData?.data?.products.map((item) => (
+                  <Tr key={item.id}>
+                    <Td>{item.slugname}</Td>
+                    <Td>{item.price}$</Td>
+                    <Td>{item.quantity}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TabPanel>
           <TabPanel>
             <Stack direction="row" spacing={4} mb={4}>
-              <Checkbox 
+              <Checkbox
                 isChecked={filters.delivered}
-                onChange={() => handleFilterChange('delivered')}
+                onChange={() => handleFilterChange("delivered")}
               >
                 Delivered
               </Checkbox>
-              <Checkbox 
+              <Checkbox
                 isChecked={filters.inProcess}
-                onChange={() => handleFilterChange('inProcess')}
+                onChange={() => handleFilterChange("inProcess")}
               >
                 In Process
               </Checkbox>
@@ -147,18 +163,14 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                {
-                  usersData?.data?.products.map((item) =>(
+                {usersData?.data?.products.map((item) => (
                   <Tr key={item.id}>
-                  <Td>{item.user.firstname}</Td>
-                  <Td>15000$</Td>
-                  <Td>july</Td>
-                  <Td>in proccess</Td>
-                </Tr>
-                )
-              )}
-                
-                
+                    <Td>{item.user.firstname}</Td>
+                    <Td>15000$</Td>
+                    <Td>july</Td>
+                    <Td>in proccess</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TabPanel>
@@ -167,4 +179,3 @@ export default function PanelAdminPage() {
     </div>
   );
 }
-

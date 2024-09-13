@@ -3,7 +3,7 @@ import Layout from "../layout/Layout";
 import HomePage from "../Pages/HomePage";
 
 import AboutUs from "../Pages/AboutUs";
-import ContactUsPage from "./ContactUsPage";
+import ContactUsPage from "../Pages/ContactUsPage";
 import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
 import AdminLoginPage from "../Pages/AdminLoginPage";
 import UserLoginPage from "../Pages/UserLoginPage";

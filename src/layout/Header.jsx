@@ -57,8 +57,8 @@ export default function Header() {
   // }, []);
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
   return (
-    <div>
-        <header className="flex justify-between m-5">
+    <div className='m-8'>
+        <header className="flex justify-between ">
         <div className='flex flex-row gap-4'>
         <CiMenuBurger  className='text-2xl w-10 cursor-pointer' onClick={onOpen} /> 
         <p>Menu</p>
