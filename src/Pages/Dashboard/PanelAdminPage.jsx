@@ -13,26 +13,38 @@ import {
   Box,
   Stack,
   Checkbox,
+  Button,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useGetProducts } from "../../Hook/useGetProducts";
 import { useQueryClient } from "react-query";
-import { useGetUsers } from "../../Hook/useGetUsers";
+import AddProductModal from "../AddProduct/AddProductModal";
+
+
 
 export default function PanelAdminPage() {
   const [filters, setFilters] = useState({
     delivered: false,
     inProcess: false,
   });
-  const qc = useQueryClient();
+  // const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
+  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () =>{
+    console.log("modal open");
+    setIsModalOpen(true);
+    
+  } 
+  const closeModal = () => setIsModalOpen(false);
   
   const itemsPerPage = 100;
   const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
-  const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
-  console.log(usersData);
+  // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
+  // console.log(usersData);
   
   // console.log(data);
   // console.log(data1);
@@ -42,6 +54,7 @@ export default function PanelAdminPage() {
     { id: 67890, customer: "goli fatemi", status: "In Process" },
     { id: 54321, customer: "mahyar adib", status: "Delivered" },
   ];
+ 
 
   const filteredOrders = orders.filter((order) => {
     if (filters.delivered && order.status === "Delivered") {
@@ -69,8 +82,14 @@ export default function PanelAdminPage() {
 
         <TabPanels>
           <TabPanel>
+            
+              <Button colorScheme='teal' variant='outline' m={10} onClick={openModal}>
+                Add New Product
+              </Button>
             <Table variant="simple">
               <Thead>
+              
+              
                 <Tr>
                   <Th>Product Image</Th>
                   <Th>Product Name</Th>
@@ -139,7 +158,7 @@ export default function PanelAdminPage() {
             </Table>
           </TabPanel>
           <TabPanel>
-            <Stack direction="row" spacing={4} mb={4}>
+            <Stack direction="row" spacing={4} m={10}>
               <Checkbox
                 isChecked={filters.delivered}
                 onChange={() => handleFilterChange("delivered")}
@@ -162,7 +181,7 @@ export default function PanelAdminPage() {
                   <Th>Status</Th>
                 </Tr>
               </Thead>
-              <Tbody>
+              {/* <Tbody>
                 {usersData?.data?.products.map((item) => (
                   <Tr key={item.id}>
                     <Td>{item.user.firstname}</Td>
@@ -171,11 +190,13 @@ export default function PanelAdminPage() {
                     <Td>in proccess</Td>
                   </Tr>
                 ))}
-              </Tbody>
+              </Tbody> */}
             </Table>
           </TabPanel>
         </TabPanels>
       </Tabs>
+      <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
+
     </div>
   );
 }
