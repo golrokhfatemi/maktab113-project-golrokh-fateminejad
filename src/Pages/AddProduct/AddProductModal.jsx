@@ -14,12 +14,10 @@ import TextInput from "../../Components/TextInput";
 import SelectInput from "../../Components/SelectInput";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import httpRequest from "../../Services/http-request";
 
-const options = [
-  { value: "1", label: " 1" },
-  { value: "2", label: " 2" },
-];
+
 export  function AddProduct() {
   const {mutate} = useCreateProduct()}
 
@@ -27,6 +25,8 @@ export  function AddProduct() {
 const AddProductModal = ({ isOpen, onClose }) => {
   const { mutate } = useCreateProduct();
   const [description, setDescription] = useState("");
+  const [categories, setCategories] = useState([]); 
+  const [subcategories, setSubCategories] = useState([]); 
   //   const dispatch = useDispatch();
 
   const handleDescriptionChange = (event, editor) => {
@@ -57,6 +57,37 @@ const AddProductModal = ({ isOpen, onClose }) => {
       image: "",
     },
   });
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await httpRequest.get("/api/categories"); 
+        
+        setCategories(response.data.data.categories);
+        
+        
+        
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const response = await httpRequest.get("/api/subcategories"); 
+        setSubCategories(response.data.data.subcategories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchSubCategories();
+  }, []);
+
 
   const onSubmitForm = (values) => {
     console.log(values);
@@ -128,7 +159,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
               /> */}
 
                 <SelectInput
-                  label={" Category of product"}
+                  label={"Category of product"}
                   name={"category"}
                   register={register("category", {
                     required: {
@@ -136,7 +167,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
                       message: " Please enter the category of course ",
                     },
                   })}
-                  options={options}
+                  options={categories?.map((category) => ({
+                    value: category._id,
+                    label: category.name,
+                  }))}
                   errors={errors}
                   
                 />
@@ -150,7 +184,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
                       message: " Please enter the product subcategory ",
                     },
                   })}
-                  options={options}
+                  options={subcategories?.map((subcategories) => ({
+                    value: subcategories._id, 
+                    label: subcategories.name,
+                  }))}
                   errors={errors}
                 />
 
