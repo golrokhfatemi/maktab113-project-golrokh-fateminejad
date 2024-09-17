@@ -16,10 +16,9 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useEffect, useState } from "react";
 import httpRequest from "../../Services/http-request";
+import { useMutation, useQueryClient } from "react-query";
 
 
-export  function AddProduct() {
-  const {mutate} = useCreateProduct()}
 
 
 const AddProductModal = ({ isOpen, onClose }) => {
@@ -91,29 +90,58 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const onSubmitForm = (values) => {
     console.log(values);
-    console.log("hi");
+    
 
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("category", values.category);
     formData.append("subcategory", values.subcategory);
-    formData.append("price", values.price);
     formData.append("quantity", values.quantity);
+    formData.append("price", values.price);
+    formData.append("brand", values.brand);
     formData.append("discount", values.discount);
     formData.append("description", values.description);
-    formData.append("brand", values.brand);
-    formData.append("thumbnail", values.thumbnail[0]);
-    formData.append("image", values.image[0]);
-
-    console.log(values.upload_images[0]);
-    console.log(values.upload_images);
-    console.log(formData.get("upload_images"));
-    console.log("Before mutate:", formData);
+    if (values.thumbnail && values.thumbnail[0]) {
+      formData.append("thumbnail", values.thumbnail[0]);
+    }
+    
+    if (values.images && values.images.length > 0) {
+      for (let i = 0; i < values.images.length; i++) {
+        formData.append(`images`, values.images[i]);
+      }
+    }
+    // formData.append("thumbnail", values.thumbnail[0]);
+    // for(const key in values.images){
+    //   if(values.images.hasOwnProperty(key)){
+    //     formData.append(`images`,values.images[key])
+    //   }
+    // }
+    // formData.append("images", values.images[0]);
+    console.log(formData);
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+  }
+    
+    // console.log(values.image[0]);
+    // console.log(values.thumbnail);
+    // console.log(formData.get("upload_images"));
+    // console.log("Before mutate:", formData);
     mutate(formData);
     // navigate("/")
   };
+
+  const AddCategory = () => {
+    const qc = useQueryClient()
+    const {mutate} = useMutation({
+      mutationFn : async(data) => {
+        await httpRequest.post('/api/categories' , data)
+        
+      },
+      mutationKey: ["addCategory"]
+    })
+  }
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add New Product</ModalHeader>
@@ -158,6 +186,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
               errors={errors}
               /> */}
 
+                <div className="flex flex-row gap-4 items-center">
                 <SelectInput
                   label={"Category of product"}
                   name={"category"}
@@ -174,7 +203,11 @@ const AddProductModal = ({ isOpen, onClose }) => {
                   errors={errors}
                   
                 />
+                <input className="shadow  rounded-md h-10"></input>
+                <Button className="felx justify-center items-center ">Add Category</Button>
+                </div>
 
+                <div className="flex flex-row gap-4 justify-center items-center">
                 <SelectInput
                   label={" subcategory of product"}
                   name={"subcategory"}
@@ -190,6 +223,9 @@ const AddProductModal = ({ isOpen, onClose }) => {
                   }))}
                   errors={errors}
                 />
+                <input className="shadow  rounded-md h-10"></input>
+                <Button className="felx justify-center items-center ">Add SubCategory</Button>
+                </div>
 
                 <TextInput
                   lable={"quantity"}
@@ -275,9 +311,9 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
                   <input
                     type="file"
-                    name="upload_images"
+                    name="thumbnail"
                     accept="image/*"
-                    {...register("upload_images")}
+                    {...register("thumbnail")}
                   />
                   {errors.image && (
                     <p className="text-red-600 text-sm  ">
@@ -298,13 +334,13 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
                   <input
                     type="file"
-                    name="upload_images"
+                    name="images"
                     accept="image/*"
-                    {...register("upload_images")}
+                    {...register("images")}
                   />
-                  {errors.image && (
+                  {errors.images && (
                     <p className="text-red-600 text-sm  ">
-                      {errors.image.message}
+                      {errors.images.message}
                     </p>
                   )}
                 </div>

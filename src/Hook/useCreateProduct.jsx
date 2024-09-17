@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { createProduct } from "../Pages/AddProduct/_api/CreatProduct-api";
+import { createProduct } from "../Pages/AddProduct/_api/CreateProduct-api";
 
 
 export default function useCreateProduct() {

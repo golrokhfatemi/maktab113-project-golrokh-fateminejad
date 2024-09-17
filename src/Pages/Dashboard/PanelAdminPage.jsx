@@ -21,6 +21,7 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useGetProducts } from "../../Hook/useGetProducts";
 import { useQueryClient } from "react-query";
 import AddProductModal from "../AddProduct/AddProductModal";
+import Pagination from "../../Components/Pagination";
 
 
 
@@ -31,9 +32,13 @@ export default function PanelAdminPage() {
   });
   // const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+  const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
+  console.log(productsData);
   
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const openModal = () =>{
     console.log("modal open");
     setIsModalOpen(true);
@@ -41,8 +46,7 @@ export default function PanelAdminPage() {
   } 
   const closeModal = () => setIsModalOpen(false);
   
-  const itemsPerPage = 100;
-  const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
+  
   // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
   // console.log(usersData);
   
@@ -135,6 +139,7 @@ export default function PanelAdminPage() {
                   </Td>
                 </Tr> */}
               </Tbody>
+              
             </Table>
           </TabPanel>
           <TabPanel>
@@ -194,6 +199,16 @@ export default function PanelAdminPage() {
             </Table>
           </TabPanel>
         </TabPanels>
+        {
+                productsData?.total && 
+                <Pagination
+                totalItems={productsData?.total}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                
+              />
+              }
       </Tabs>
       <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
 
