@@ -52,13 +52,26 @@ const Pagination = ({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           rightIcon={<ArrowBackIcon />}
-          colorScheme='teal'
+        //   colorScheme='teal'
           variant='solid'
+          sx={{
+            backgroundColor: "teal.400", 
+            color: "white", 
+            _hover: {
+              backgroundColor: "teal.600" 
+            }
+          }}
         >
         </Button>
         {getPageNumber().map((page) => (
           <Button
-            colorScheme='teal'
+          sx={{
+            backgroundColor: "teal.400", 
+            color: "white", 
+            _hover: {
+              backgroundColor: "teal.600" 
+            }
+          }}
             variant='solid'
             className={`px-3 py-1 rounded-lg bg-slate-300 ${
               currentPage === page ? "bg-slate-500" : ""
@@ -75,7 +88,13 @@ const Pagination = ({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           rightIcon={<ArrowForwardIcon />}
-          colorScheme='teal'
+          sx={{
+            backgroundColor: "teal.400", 
+            color: "white", 
+            _hover: {
+              backgroundColor: "teal.600" 
+            }
+          }}
           variant='solid'
         >
           

@@ -6,3 +6,15 @@ export const getProducts = async (page = 1, itemsPerPage = 2) => {
   // console.log(res.data);
   return res.data;
 };
+
+
+export const deleteProduct = async(id) => {
+    console.log(id);  
+try{ 
+ const res = await httpRequest.delete(`/api/products/${id}/`)
+ return res
+}catch(e){
+console.log(e.message);
+
+}
+}

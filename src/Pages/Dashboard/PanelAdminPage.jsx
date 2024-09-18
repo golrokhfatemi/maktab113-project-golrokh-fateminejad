@@ -22,6 +22,7 @@ import { useGetProducts } from "../../Hook/useGetProducts";
 import { useQueryClient } from "react-query";
 import AddProductModal from "../AddProduct/AddProductModal";
 import Pagination from "../../Components/Pagination";
+import useDeleteProduct from "../../Hook/useDeleteProduct";
 
 
 
@@ -30,12 +31,14 @@ export default function PanelAdminPage() {
     delivered: false,
     inProcess: false,
   });
-  // const qc = useQueryClient();
+  const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
   console.log(productsData);
-  
+  const [deleteModal ,setDeleteModal] = useState(false)
+  const [deleteVal, setDeleteVal] = useState({});
+  const {mutate} = useDeleteProduct()
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -46,7 +49,26 @@ export default function PanelAdminPage() {
   } 
   const closeModal = () => setIsModalOpen(false);
   
+  const handleShowDeleteModal = (id) => {
+    setDeleteVal(id)
+    setDeleteModal(true)
+   }
+
+   const handleConfirmDelete = () => {
   
+    mutate(deleteVal, {
+      onSuccess: () => {
+        console.log(" deleted ");
+        qc.invalidateQueries({ queryKey : ["products"] }); 
+        setDeleteModal(false); 
+      },
+    });
+  };
+
+
+  const handleCloseModal = () => {
+    setDeleteModal(false);
+  };
   // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
   // console.log(usersData);
   
@@ -122,7 +144,7 @@ export default function PanelAdminPage() {
                     <Td>
                       <Box className="flex flex-row gap-4">
                         <CiEdit className="text-2xl" />
-                        <MdOutlineDeleteOutline className="text-2xl" />
+                        <MdOutlineDeleteOutline className="text-2xl" onClick={() => handleShowDeleteModal(item._id)}/>
                       </Box>
                     </Td>
                   </Tr>
@@ -211,6 +233,17 @@ export default function PanelAdminPage() {
               }
       </Tabs>
       <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
+      {deleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-14 rounded-2xl shadow-lg flex flex-col gap-4">
+            <h2>Are you sure you want to delete this product?</h2>
+            <div className='flex flex-row justify-around'>
+            <button className='bg-slate-800 text-white px-3 py-2 rounded-md m-2 cursor-pointer'  onClick={handleCloseModal}>Cancel</button>
+            <button className='bg-slate-800 text-white px-3 py-2 rounded-md m-2' onClick={handleConfirmDelete}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

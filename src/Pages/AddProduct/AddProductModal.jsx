@@ -8,7 +8,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import useCreateProduct from "../../Hook/useCreateProduct";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import TextInput from "../../Components/TextInput";
 import SelectInput from "../../Components/SelectInput";
@@ -26,7 +26,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]); 
   const [subcategories, setSubCategories] = useState([]); 
-  //   const dispatch = useDispatch();
+  
 
   const handleDescriptionChange = (event, editor) => {
     const data = editor.getData();
@@ -50,12 +50,12 @@ const AddProductModal = ({ isOpen, onClose }) => {
       price: "",
       quantity: "",
       discount: "",
-      description: "",
       brand: "",
       thumbnail: "",
       image: "",
     },
   });
+console.log(errors);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -89,7 +89,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
 
   const onSubmitForm = (values) => {
-    console.log(values);
+   
     
 
     const formData = new FormData();
@@ -100,7 +100,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     formData.append("price", values.price);
     formData.append("brand", values.brand);
     formData.append("discount", values.discount);
-    formData.append("description", values.description);
+    formData.append("description", description);
     if (values.thumbnail && values.thumbnail[0]) {
       formData.append("thumbnail", values.thumbnail[0]);
     }
@@ -110,6 +110,11 @@ const AddProductModal = ({ isOpen, onClose }) => {
         formData.append(`images`, values.images[i]);
       }
     }
+
+    
+
+    
+  
     // formData.append("thumbnail", values.thumbnail[0]);
     // for(const key in values.images){
     //   if(values.images.hasOwnProperty(key)){
@@ -127,7 +132,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     // console.log(formData.get("upload_images"));
     // console.log("Before mutate:", formData);
     mutate(formData);
-    // navigate("/")
+    
   };
 
   const AddCategory = () => {
@@ -261,12 +266,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
                     required: {
                       value: true,
                       message: "Please enter the product brand",
-                    },
-
-                    maxLength: {
-                      value: 5,
-                      message: "At last 5 characture",
-                    },
+                    }
                   })}
                   type={"string"}
                   errors={errors}
@@ -296,6 +296,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
                     editor={ClassicEditor}
                     data="<p>Enter product description here...</p>"
                     onChange={handleDescriptionChange}
+                    
+                    
                   />
                 </div>
 
@@ -346,7 +348,9 @@ const AddProductModal = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="flex justify-around mt-10">
+                  
                   <Button type="submit">submit</Button>
+                  
                 </div>
               </form>
             
