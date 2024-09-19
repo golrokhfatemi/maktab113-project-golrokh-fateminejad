@@ -7,6 +7,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "../Hook/useLogin";
+import Cookies from 'js-cookie'
 
 
 
@@ -16,9 +18,25 @@ export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const {mutate , isPending} = useLogin()
+  const navigate = useNavigate()
   
-  const navigate = useNavigate();
-
+ 
+  const handleLogin =(e)=>{
+    e.preventDefault()
+    const values ={
+      name : e.target["username"]. value ,
+      password : e.target["password"].value
+    }
+    mutate(values ,{
+      onSuccess : (res) => {
+        console.log(res)
+        Cookies.set("accessToken" , res.data.access)
+        Cookies.set("refreshToken" , res.data.refresh)
+        navigate('/')
+      }
+    })
+  }
  
   
   return (
@@ -31,7 +49,7 @@ export default function AdminLoginPage() {
       <div className="flex justify-center items-start flex-col h-screen ml-20">
         <form
           className="flex flex-col justify-center items-center gap-3 border-2 bg-teal-800 text-white p-10  w-1/3 rounded-3xl h-2/3"
-          
+          onSubmit={handleLogin}
         >
       
           <Stack spacing={5}>

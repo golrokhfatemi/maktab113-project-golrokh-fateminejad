@@ -27,7 +27,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const [categories, setCategories] = useState([]); 
   const [subcategories, setSubCategories] = useState([]); 
   const [filteredSubcategories, setFilteredSubCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  
   
 
   const handleDescriptionChange = (event, editor) => {
@@ -44,6 +44,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     formState: { errors },
     reset,
     setValue,
+    watch,
     
   } = useForm({
     defaultValues: {
@@ -59,6 +60,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     },
   });
 // console.log(errors);
+const selectedCategory = watch("category");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -102,15 +104,15 @@ const AddProductModal = ({ isOpen, onClose }) => {
   }, [selectedCategory, subcategories]);
 
 
-  const handleCategoryChange = (e) => {
-    const categoryId = e.target.value;
+  // const handleCategoryChange = (e) => {
+  //   const categoryId = e.target.value;
   
-    console.log(categoryId);
-    console.log("hi");
+  //   console.log(categoryId);
+  //   console.log("hi");
     
     
-    setSelectedCategory(categoryId);
-  };
+  //   setSelectedCategory(categoryId);
+  // };
 
 
   const onSubmitForm = (values) => {
