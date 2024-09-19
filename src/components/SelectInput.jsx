@@ -1,6 +1,7 @@
 export default function SelectInput({
     label,
     name,
+    onChange,
     options = [],
     register,
     errors,
@@ -21,6 +22,7 @@ export default function SelectInput({
             className="shadow border w-48 rounded-md py-2 px-3 text-gray-700 focus:outline-none"
             id={name}
             name={name}
+            onChange={onChange}
             {...props}
             {...register}
           >

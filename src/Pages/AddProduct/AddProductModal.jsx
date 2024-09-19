@@ -26,6 +26,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]); 
   const [subcategories, setSubCategories] = useState([]); 
+  const [filteredSubcategories, setFilteredSubCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   
 
   const handleDescriptionChange = (event, editor) => {
@@ -42,6 +44,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     formState: { errors },
     reset,
     setValue,
+    
   } = useForm({
     defaultValues: {
       name: "",
@@ -55,7 +58,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       image: "",
     },
   });
-console.log(errors);
+// console.log(errors);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -86,6 +89,28 @@ console.log(errors);
 
     fetchSubCategories();
   }, []);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const filteredSubs = subcategories.filter(
+        (subcategory) => subcategory.category === selectedCategory
+      );
+      setFilteredSubCategories(filteredSubs);
+    } else {
+      setFilteredSubCategories([]);
+    }
+  }, [selectedCategory, subcategories]);
+
+
+  const handleCategoryChange = (e) => {
+    const categoryId = e.target.value;
+  
+    console.log(categoryId);
+    console.log("hi");
+    
+    
+    setSelectedCategory(categoryId);
+  };
 
 
   const onSubmitForm = (values) => {
@@ -199,13 +224,19 @@ console.log(errors);
                     required: {
                       value: true,
                       message: " Please enter the category of course ",
-                    },
+                    }
                   })}
                   options={categories?.map((category) => ({
                     value: category._id,
                     label: category.name,
                   }))}
                   errors={errors}
+                  // onChange={(e) => {
+                  //   const categoryId = e.target.value;
+                  //   setSelectedCategory(categoryId);    
+                  //   setValue("category", categoryId);   
+                  //   trigger("category");                
+                  // }}
                   
                 />
                 <input className="shadow  rounded-md h-10"></input>
@@ -222,9 +253,9 @@ console.log(errors);
                       message: " Please enter the product subcategory ",
                     },
                   })}
-                  options={subcategories?.map((subcategories) => ({
-                    value: subcategories._id, 
-                    label: subcategories.name,
+                  options={filteredSubcategories?.map((subcategory) => ({
+                    value: subcategory._id,
+                    label: subcategory.name,
                   }))}
                   errors={errors}
                 />

@@ -23,19 +23,22 @@ import { useQueryClient } from "react-query";
 import AddProductModal from "../AddProduct/AddProductModal";
 import Pagination from "../../Components/Pagination";
 import useDeleteProduct from "../../Hook/useDeleteProduct";
+import { useGetOrders } from "../../Hook/useGetOrders";
 
 
 
 export default function PanelAdminPage() {
   const [filters, setFilters] = useState({
     delivered: false,
-    inProcess: false,
+    inProcces: false,
   });
   const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
   const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
+  const { data: ordersData } = useGetOrders(currentPage, itemsPerPage);
   console.log(productsData);
+  console.log(ordersData);
   const [deleteModal ,setDeleteModal] = useState(false)
   const [deleteVal, setDeleteVal] = useState({});
   const {mutate} = useDeleteProduct()
@@ -75,28 +78,29 @@ export default function PanelAdminPage() {
   // console.log(data);
   // console.log(data1);
 
-  const orders = [
-    { id: 12345, customer: "ali ahmadi", status: "Delivered" },
-    { id: 67890, customer: "goli fatemi", status: "In Process" },
-    { id: 54321, customer: "mahyar adib", status: "Delivered" },
-  ];
  
 
-  const filteredOrders = orders.filter((order) => {
-    if (filters.delivered && order.status === "Delivered") {
+  const filteredOrders = ordersData?.data?.orders.filter((order) => {
+    if (filters.delivered && order.deliveryStatus === true) {
       return true;
     }
-    if (filters.inProcess && order.status === "In Process") {
+    if (filters.inProcces && order.deliveryStatus === false) {
       return true;
     }
-    if (!filters.delivered && !filters.inProcess) {
+    if (!filters.delivered && !filters.inProcces) {
       return true;
     }
     return false;
   });
+console.log(filteredOrders);
+console.log('Filters:', filters);
+
+  
   const handleFilterChange = (filter) => {
     setFilters((prev) => ({ ...prev, [filter]: !prev[filter] }));
   };
+
+
   return (
     <div className="p-6">
       <Tabs variant="enclosed">
@@ -186,15 +190,15 @@ export default function PanelAdminPage() {
           </TabPanel>
           <TabPanel>
             <Stack direction="row" spacing={4} m={10}>
-              <Checkbox
+            <Checkbox
                 isChecked={filters.delivered}
                 onChange={() => handleFilterChange("delivered")}
               >
                 Delivered
               </Checkbox>
               <Checkbox
-                isChecked={filters.inProcess}
-                onChange={() => handleFilterChange("inProcess")}
+                isChecked={filters.inProcces}
+                onChange={() => handleFilterChange("inProcces")}
               >
                 In Process
               </Checkbox>
@@ -208,16 +212,16 @@ export default function PanelAdminPage() {
                   <Th>Status</Th>
                 </Tr>
               </Thead>
-              {/* <Tbody>
-                {usersData?.data?.products.map((item) => (
+              <Tbody>
+                {filteredOrders && filteredOrders.map((item) => (
                   <Tr key={item.id}>
-                    <Td>{item.user.firstname}</Td>
-                    <Td>15000$</Td>
-                    <Td>july</Td>
-                    <Td>in proccess</Td>
+                    <Td>{item.user.firstname}    {item.user.lastname}</Td>
+                    <Td>{item.totalprice}$</Td>
+                    <Td>{new Date(item.createdAt).toLocaleDateString()}</Td>
+                    <Td>{item.deliveryStatus ? 'Delivered' : 'inProcces'}</Td>
                   </Tr>
                 ))}
-              </Tbody> */}
+              </Tbody>
             </Table>
           </TabPanel>
         </TabPanels>
