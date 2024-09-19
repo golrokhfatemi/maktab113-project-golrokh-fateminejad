@@ -24,15 +24,17 @@ export default function AdminLoginPage() {
  
   const handleLogin =(e)=>{
     e.preventDefault()
+    console.log("hi");
+    
     const values ={
-      name : e.target["username"]. value ,
+      username : e.target["username"]. value ,
       password : e.target["password"].value
     }
     mutate(values ,{
       onSuccess : (res) => {
         console.log(res)
-        Cookies.set("accessToken" , res.data.access)
-        Cookies.set("refreshToken" , res.data.refresh)
+        Cookies.set("accessToken" , res.token.accessToken)
+        Cookies.set("refreshToken" , res.token.refreshToken)
         navigate('/')
       }
     })
@@ -90,7 +92,7 @@ export default function AdminLoginPage() {
           )}
           </Stack>
          
-          <Button colorScheme="teal" size="md" >
+          <Button colorScheme="teal" size="md" type="submit" >
             {/* {
             isPending ? "Loading..." : "Login"
           } */}

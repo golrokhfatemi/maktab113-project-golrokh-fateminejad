@@ -11,7 +11,10 @@ export default function Login() {
 
 
   const handleLogin =(e)=>{
+  
     e.preventDefault()
+    console.log("hi");
+    
     const values ={
       name : e.target["username"]. value ,
       password : e.target["password"].value
@@ -34,8 +37,8 @@ export default function Login() {
           </label>
           <input className='bg-slate-200 rounded-md mx-4 p-2 w-full text-black' 
           type='text' 
-          id="phone" 
-          placeholder='Enter your phonenumber'
+          id="username" 
+          placeholder='Enter your username'
           
           />
         <label>

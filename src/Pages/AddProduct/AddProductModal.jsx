@@ -18,17 +18,17 @@ import { useEffect, useState } from "react";
 import httpRequest from "../../Services/http-request";
 import { useMutation, useQueryClient } from "react-query";
 
-
-
-
 const AddProductModal = ({ isOpen, onClose }) => {
-  const { mutate } = useCreateProduct();
+  const queryClient = useQueryClient();
+  const { mutate } = useCreateProduct({
+   
+  });
+
+
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState([]); 
-  const [subcategories, setSubCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubCategories] = useState([]);
   const [filteredSubcategories, setFilteredSubCategories] = useState([]);
-  
-  
 
   const handleDescriptionChange = (event, editor) => {
     const data = editor.getData();
@@ -36,7 +36,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
     console.log(description);
   };
 
-  
   // const navigate = useNavigate();
   const {
     register,
@@ -45,7 +44,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
     reset,
     setValue,
     watch,
-    
   } = useForm({
     defaultValues: {
       name: "",
@@ -59,18 +57,15 @@ const AddProductModal = ({ isOpen, onClose }) => {
       image: "",
     },
   });
-// console.log(errors);
-const selectedCategory = watch("category");
+  // console.log(errors);
+  const selectedCategory = watch("category");
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await httpRequest.get("/api/categories"); 
-        
+        const response = await httpRequest.get("/api/categories");
+
         setCategories(response.data.data.categories);
-        
-        
-        
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -82,7 +77,7 @@ const selectedCategory = watch("category");
   useEffect(() => {
     const fetchSubCategories = async () => {
       try {
-        const response = await httpRequest.get("/api/subcategories"); 
+        const response = await httpRequest.get("/api/subcategories");
         setSubCategories(response.data.data.subcategories);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -103,22 +98,16 @@ const selectedCategory = watch("category");
     }
   }, [selectedCategory, subcategories]);
 
-
   // const handleCategoryChange = (e) => {
   //   const categoryId = e.target.value;
-  
+
   //   console.log(categoryId);
   //   console.log("hi");
-    
-    
+
   //   setSelectedCategory(categoryId);
   // };
 
-
   const onSubmitForm = (values) => {
-   
-    
-
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("category", values.category);
@@ -131,17 +120,13 @@ const selectedCategory = watch("category");
     if (values.thumbnail && values.thumbnail[0]) {
       formData.append("thumbnail", values.thumbnail[0]);
     }
-    
+
     if (values.images && values.images.length > 0) {
       for (let i = 0; i < values.images.length; i++) {
         formData.append(`images`, values.images[i]);
       }
     }
 
-    
-
-    
-  
     // formData.append("thumbnail", values.thumbnail[0]);
     // for(const key in values.images){
     //   if(values.images.hasOwnProperty(key)){
@@ -151,27 +136,31 @@ const selectedCategory = watch("category");
     // formData.append("images", values.images[0]);
     console.log(formData);
     for (let pair of formData.entries()) {
-      console.log(pair[0] + ': ' + pair[1]);
-  }
-    
+      console.log(pair[0] + ": " + pair[1]);
+    }
+
     // console.log(values.image[0]);
     // console.log(values.thumbnail);
     // console.log(formData.get("upload_images"));
     // console.log("Before mutate:", formData);
-    mutate(formData);
-    
+    mutate(formData,{ onSuccess: () => {
+      console.log("hi");
+      
+      queryClient.invalidateQueries("products");
+      onClose(); 
+    },});
+
   };
 
   const AddCategory = () => {
-    const qc = useQueryClient()
-    const {mutate} = useMutation({
-      mutationFn : async(data) => {
-        await httpRequest.post('/api/categories' , data)
-        
+    const qc = useQueryClient();
+    const { mutate } = useMutation({
+      mutationFn: async (data) => {
+        await httpRequest.post("/api/categories", data);
       },
-      mutationKey: ["addCategory"]
-    })
-  }
+      mutationKey: ["addCategory"],
+    });
+  };
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl">
       <ModalOverlay />
@@ -180,28 +169,26 @@ const selectedCategory = watch("category");
         <ModalCloseButton />
         <ModalBody>
           <div className="flex flex-row justify-center ">
-            
-              <form onSubmit={handleSubmit(onSubmitForm)}>
-                
-                <TextInput
-                  lable={"Product name"}
-                  name={"name"}
-                  register={register("name", {
-                    required: {
-                      value: true,
-                      message: "   Please Enter product name  ",
-                    },
+            <form onSubmit={handleSubmit(onSubmitForm)}>
+              <TextInput
+                lable={"Product name"}
+                name={"name"}
+                register={register("name", {
+                  required: {
+                    value: true,
+                    message: "   Please Enter product name  ",
+                  },
 
-                    minLength: {
-                      value: 3,
-                      message: "At Least 3 characture",
-                    },
-                  })}
-                  errors={errors}
-                />
-                {/* <p className='text-red-600 '>{errors.name?.message}</p> */}
+                  minLength: {
+                    value: 3,
+                    message: "At Least 3 characture",
+                  },
+                })}
+                errors={errors}
+              />
+              {/* <p className='text-red-600 '>{errors.name?.message}</p> */}
 
-                {/* <TextInput
+              {/* <TextInput
               lable={" Category"}
               name={"category"}
               register={register("category", {
@@ -218,7 +205,7 @@ const selectedCategory = watch("category");
               errors={errors}
               /> */}
 
-                <div className="flex flex-row gap-4 items-center">
+              <div className="flex flex-row gap-4 items-center">
                 <SelectInput
                   label={"Category of product"}
                   name={"category"}
@@ -226,7 +213,7 @@ const selectedCategory = watch("category");
                     required: {
                       value: true,
                       message: " Please enter the category of course ",
-                    }
+                    },
                   })}
                   options={categories?.map((category) => ({
                     value: category._id,
@@ -235,17 +222,18 @@ const selectedCategory = watch("category");
                   errors={errors}
                   // onChange={(e) => {
                   //   const categoryId = e.target.value;
-                  //   setSelectedCategory(categoryId);    
-                  //   setValue("category", categoryId);   
-                  //   trigger("category");                
+                  //   setSelectedCategory(categoryId);
+                  //   setValue("category", categoryId);
+                  //   trigger("category");
                   // }}
-                  
                 />
                 <input className="shadow  rounded-md h-10"></input>
-                <Button className="felx justify-center items-center ">Add Category</Button>
-                </div>
+                <Button className="felx justify-center items-center ">
+                  Add Category
+                </Button>
+              </div>
 
-                <div className="flex flex-row gap-4 justify-center items-center">
+              <div className="flex flex-row gap-4 justify-center items-center">
                 <SelectInput
                   label={" subcategory of product"}
                   name={"subcategory"}
@@ -262,138 +250,131 @@ const selectedCategory = watch("category");
                   errors={errors}
                 />
                 <input className="shadow  rounded-md h-10"></input>
-                <Button className="felx justify-center items-center ">Add SubCategory</Button>
-                </div>
+                <Button className="felx justify-center items-center ">
+                  Add SubCategory
+                </Button>
+              </div>
 
-                <TextInput
-                  lable={"quantity"}
-                  name={"quantity"}
-                  register={register("quantity", {
-                    required: {
-                      value: true,
-                      message: "Please enter product quantity",
-                    },
-                  })}
-                  
-                  errors={errors}
-                  type={"number"}
+              <TextInput
+                lable={"quantity"}
+                name={"quantity"}
+                register={register("quantity", {
+                  required: {
+                    value: true,
+                    message: "Please enter product quantity",
+                  },
+                })}
+                errors={errors}
+                type={"number"}
+              />
+
+              <TextInput
+                lable={"  Price "}
+                name={"price"}
+                register={register("price", {
+                  required: {
+                    value: true,
+                    message: "Please enter price of the course",
+                  },
+                })}
+                type={"number"}
+                errors={errors}
+              />
+
+              <TextInput
+                lable={"brand"}
+                name={"brand"}
+                register={register("brand", {
+                  required: {
+                    value: true,
+                    message: "Please enter the product brand",
+                  },
+                })}
+                type={"string"}
+                errors={errors}
+              />
+
+              <TextInput
+                lable={"discount"}
+                name={"discount"}
+                register={register("discount", {
+                  required: {
+                    value: true,
+                    message: "Please enter the product discount",
+                  },
+
+                  maxLength: {
+                    value: 3,
+                    message: "At last 3 characture",
+                  },
+                })}
+                type={"number"}
+                errors={errors}
+              />
+              <div style={{ width: "100%" }}>
+                <label className="text-sm font-bold">Description</label>
+                <CKEditor
+                  editor={ClassicEditor}
+                  data="<p>Enter product description here...</p>"
+                  onChange={handleDescriptionChange}
                 />
+              </div>
 
-                <TextInput
-                  lable={"  Price "}
-                  name={"price"}
-                  register={register("price", {
-                    required: {
-                      value: true,
-                      message: "Please enter price of the course",
-                    },
-                  })}
-                  type={"number"}
-                  errors={errors}
+              <div className="m-5 w-full flex flex-row justify-start items-center ">
+                <div className="px-8">
+                  <label
+                    className="block text-gray-700 text-sm font-bold text-center  "
+                    htmlFor="image"
+                  >
+                    Thumbnail:{" "}
+                  </label>
+                </div>
+
+                <input
+                  type="file"
+                  name="thumbnail"
+                  accept="image/*"
+                  {...register("thumbnail")}
                 />
+                {errors.image && (
+                  <p className="text-red-600 text-sm  ">
+                    {errors.image.message}
+                  </p>
+                )}
+              </div>
 
-                <TextInput
-                  lable={"brand"}
-                  name={"brand"}
-                  register={register("brand", {
-                    required: {
-                      value: true,
-                      message: "Please enter the product brand",
-                    }
-                  })}
-                  type={"string"}
-                  errors={errors}
+              <div className="m-5 w-full flex flex-row justify-start items-center ">
+                <div className="px-8">
+                  <label
+                    className="block text-gray-700 text-sm font-bold text-center  "
+                    htmlFor="image"
+                  >
+                    Image:{" "}
+                  </label>
+                </div>
+
+                <input
+                  type="file"
+                  name="images"
+                  accept="image/*"
+                  {...register("images")}
                 />
+                {errors.images && (
+                  <p className="text-red-600 text-sm  ">
+                    {errors.images.message}
+                  </p>
+                )}
+              </div>
 
-                <TextInput
-                  lable={"discount"}
-                  name={"discount"}
-                  register={register("discount", {
-                    required: {
-                      value: true,
-                      message: "Please enter the product discount",
-                    },
-
-                    maxLength: {
-                      value: 3,
-                      message: "At last 3 characture",
-                    },
-                  })}
-                  type={"number"}
-                  errors={errors}
-                  
-                />
-                <div style={{ width: "100%" }}>
-                  <label className="text-sm font-bold">Description</label>
-                  <CKEditor
-                    editor={ClassicEditor}
-                    data="<p>Enter product description here...</p>"
-                    onChange={handleDescriptionChange}
-                    
-                    
-                  />
-                </div>
-
-                <div className="m-5 w-full flex flex-row justify-start items-center ">
-                  <div className="px-8">
-                    <label
-                      className="block text-gray-700 text-sm font-bold text-center  "
-                      htmlFor="image"
-                    >
-                      Thumbnail:{" "}
-                    </label>
-                  </div>
-
-                  <input
-                    type="file"
-                    name="thumbnail"
-                    accept="image/*"
-                    {...register("thumbnail")}
-                  />
-                  {errors.image && (
-                    <p className="text-red-600 text-sm  ">
-                      {errors.image.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="m-5 w-full flex flex-row justify-start items-center ">
-                  <div className="px-8">
-                    <label
-                      className="block text-gray-700 text-sm font-bold text-center  "
-                      htmlFor="image"
-                    >
-                      Image:{" "}
-                    </label>
-                  </div>
-
-                  <input
-                    type="file"
-                    name="images"
-                    accept="image/*"
-                    {...register("images")}
-                  />
-                  {errors.images && (
-                    <p className="text-red-600 text-sm  ">
-                      {errors.images.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex justify-around mt-10">
-                  
-                  <Button type="submit">submit</Button>
-                  
-                </div>
-              </form>
-            
+              <div className="flex justify-around mt-10">
+                <Button type="submit">submit</Button>
+              </div>
+            </form>
           </div>
         </ModalBody>
       </ModalContent>
     </Modal>
   );
-};
+}
 
 export default AddProductModal;
-
-

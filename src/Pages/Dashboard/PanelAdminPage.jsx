@@ -34,6 +34,7 @@ export default function PanelAdminPage() {
   });
   const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('');
   const itemsPerPage = 4;
   const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
   const { data: ordersData } = useGetOrders(currentPage, itemsPerPage);
@@ -50,8 +51,11 @@ export default function PanelAdminPage() {
     setIsModalOpen(true);
     
   } 
-  const closeModal = () => setIsModalOpen(false);
-  
+  const closeModal = () => {
+    console.log("close modal");
+    
+    setIsModalOpen(false);
+  }
   const handleShowDeleteModal = (id) => {
     setDeleteVal(id)
     setDeleteModal(true)
@@ -99,11 +103,11 @@ console.log('Filters:', filters);
   const handleFilterChange = (filter) => {
     setFilters((prev) => ({ ...prev, [filter]: !prev[filter] }));
   };
-
+  const totalOrders = ordersData?.total || 0;
 
   return (
     <div className="p-6">
-      <Tabs variant="enclosed">
+      <Tabs variant="enclosed"  onChange={(index) => setActiveTab(index === 0 ? 'products' : index === 1 ? 'instock' : 'orders')}>
         <TabList>
           <Tab>Products</Tab>
           <Tab>In stock</Tab>
@@ -118,8 +122,6 @@ console.log('Filters:', filters);
               </Button>
             <Table variant="simple">
               <Thead>
-              
-              
                 <Tr>
                   <Th>Product Image</Th>
                   <Th>Product Name</Th>
@@ -167,6 +169,16 @@ console.log('Filters:', filters);
               </Tbody>
               
             </Table>
+            {
+                productsData?.total && 
+                <Pagination
+                totalItems={productsData?.total}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                
+              />
+              }
           </TabPanel>
           <TabPanel>
             <Table variant="simple">
@@ -187,6 +199,16 @@ console.log('Filters:', filters);
                 ))}
               </Tbody>
             </Table>
+            {
+                productsData?.total && 
+                <Pagination
+                totalItems={productsData?.total}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                
+              />
+              }
           </TabPanel>
           <TabPanel>
             <Stack direction="row" spacing={4} m={10}>
@@ -223,9 +245,17 @@ console.log('Filters:', filters);
                 ))}
               </Tbody>
             </Table>
+            {activeTab === 'orders' && (
+              <Pagination
+                totalItems={totalOrders || 0}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </TabPanel>
         </TabPanels>
-        {
+            {/* {
                 productsData?.total && 
                 <Pagination
                 totalItems={productsData?.total}
@@ -234,7 +264,8 @@ console.log('Filters:', filters);
                 onPageChange={setCurrentPage}
                 
               />
-              }
+              } */}
+              
       </Tabs>
       <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
       {deleteModal && (
