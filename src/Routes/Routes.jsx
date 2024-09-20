@@ -10,6 +10,8 @@ import UserLoginPage from "../Pages/UserLoginPage";
 
 
 
+
+
 const router = createBrowserRouter([
   {
     path: "/admin-login",
@@ -17,7 +19,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/panel-admin",
-    element: <PanelAdminPage/>
+    element:
+      <PanelAdminPage/>
+    
   },
   {
     path: "/",

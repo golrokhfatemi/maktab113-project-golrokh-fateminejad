@@ -24,7 +24,8 @@ import AddProductModal from "../AddProduct/AddProductModal";
 import Pagination from "../../Components/Pagination";
 import useDeleteProduct from "../../Hook/useDeleteProduct";
 import { useGetOrders } from "../../Hook/useGetOrders";
-
+import Cookies from "js-cookie";
+import { Link, useNavigate } from "react-router-dom";
 
 
 export default function PanelAdminPage() {
@@ -43,7 +44,7 @@ export default function PanelAdminPage() {
   const [deleteModal ,setDeleteModal] = useState(false)
   const [deleteVal, setDeleteVal] = useState({});
   const {mutate} = useDeleteProduct()
-
+  const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () =>{
@@ -105,9 +106,19 @@ console.log('Filters:', filters);
   };
   const totalOrders = ordersData?.total || 0;
 
+
+  const handleLogout = () => {
+    Cookies.remove('accessToken');
+    navigate('/admin-login');
+  };
+  
   return (
     <div className="p-6">
+      <Button  colorScheme='teal' variant='outline' m={10} onClick={handleLogout}>Logout</Button>
+      <Link to={"/"}>
+      <Button  colorScheme='teal' variant='outline' m={10} >Back to Home</Button></Link>
       <Tabs variant="enclosed"  onChange={(index) => setActiveTab(index === 0 ? 'products' : index === 1 ? 'instock' : 'orders')}>
+        
         <TabList>
           <Tab>Products</Tab>
           <Tab>In stock</Tab>
@@ -238,7 +249,8 @@ console.log('Filters:', filters);
                 {filteredOrders && filteredOrders.map((item) => (
                   <Tr key={item.id}>
                     <Td>{item.user.firstname}    {item.user.lastname}</Td>
-                    <Td>{item.totalprice}$</Td>
+                    <Td>{item.totalPrice
+                    }$</Td>
                     <Td>{new Date(item.createdAt).toLocaleDateString()}</Td>
                     <Td>{item.deliveryStatus ? 'Delivered' : 'inProcces'}</Td>
                   </Tr>
@@ -253,7 +265,9 @@ console.log('Filters:', filters);
                 onPageChange={setCurrentPage}
               />
             )}
+            
           </TabPanel>
+          
         </TabPanels>
             {/* {
                 productsData?.total && 
@@ -267,6 +281,7 @@ console.log('Filters:', filters);
               } */}
               
       </Tabs>
+      
       <AddProductModal isOpen={isModalOpen} onClose={closeModal} />
       {deleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

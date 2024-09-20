@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../Hook/useLogin";
 import Cookies from 'js-cookie'
+import { useEffect } from "react";
 
 
 
@@ -35,11 +36,18 @@ export default function AdminLoginPage() {
         console.log(res)
         Cookies.set("accessToken" , res.token.accessToken)
         Cookies.set("refreshToken" , res.token.refreshToken)
-        navigate('/')
+        navigate('/panel-admin')
       }
     })
   }
  
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (token) {
+      
+      navigate('/dashboard');
+    }
+  }, [navigate]);
   
   return (
     <div

@@ -9,7 +9,7 @@ export default function HomePage() {
   console.log(productsData);
   
   return (
-    <div className=' grid grid-cols-3 gap-7 mx-5'>
+    <div className=' grid grid-cols-3 gap-7 mx-5 '>
     {
       productsData?.data?.products.map((item) => (
         <Card key="item.id">
@@ -21,9 +21,9 @@ export default function HomePage() {
     />
     <Stack mt='6' spacing='3'>
       <Heading size='md'>{item.name}</Heading>
-      <Text>
+      {/* <Text>
         {item.description}
-      </Text>
+      </Text> */}
       <Text color='blue.600' fontSize='2xl'>
         ${item.price}
       </Text>
