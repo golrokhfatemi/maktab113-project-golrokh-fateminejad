@@ -42,10 +42,10 @@ export default function AdminLoginPage() {
   }
  
   useEffect(() => {
-    const token = Cookies.get('token');
+    const token = Cookies.get('accessToken');
     if (token) {
       
-      navigate('/dashboard');
+      navigate('/panel-admin');
     }
   }, [navigate]);
   

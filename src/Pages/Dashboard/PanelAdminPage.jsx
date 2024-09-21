@@ -14,6 +14,8 @@ import {
   Stack,
   Checkbox,
   Button,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { CiEdit } from "react-icons/ci";
@@ -26,6 +28,7 @@ import useDeleteProduct from "../../Hook/useDeleteProduct";
 import { useGetOrders } from "../../Hook/useGetOrders";
 import Cookies from "js-cookie";
 import { Link, useNavigate } from "react-router-dom";
+
 
 
 export default function PanelAdminPage() {
@@ -46,6 +49,16 @@ export default function PanelAdminPage() {
   const {mutate} = useDeleteProduct()
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filter, setFilter] = useState('All');
+  
+
+const handleFilterChange = (value) => {
+  setFilter(value);
+  setFilters({
+    delivered: value === 'delivered',
+    inProcces: value === 'inProcces',
+  });
+};
 
   const openModal = () =>{
     console.log("modal open");
@@ -101,9 +114,9 @@ console.log(filteredOrders);
 console.log('Filters:', filters);
 
   
-  const handleFilterChange = (filter) => {
-    setFilters((prev) => ({ ...prev, [filter]: !prev[filter] }));
-  };
+  // const handleFilterChange = (filter) => {
+  //   setFilters((prev) => ({ ...prev, [filter]: !prev[filter] }));
+  // };
   const totalOrders = ordersData?.total || 0;
 
 
@@ -114,9 +127,13 @@ console.log('Filters:', filters);
   
   return (
     <div className="p-6">
-      <Button  colorScheme='teal' variant='outline' m={10} onClick={handleLogout}>Logout</Button>
+      <Box display="flex" justifyContent="flex-end" mb={4}>
+      <Button  colorScheme='teal' variant='outline' m={3} onClick={handleLogout}>Logout</Button>
       <Link to={"/"}>
-      <Button  colorScheme='teal' variant='outline' m={10} >Back to Home</Button></Link>
+      <Button  colorScheme='teal' variant='outline' m={3} >Back to Home</Button>
+      </Link>
+      
+      </Box>
       <Tabs variant="enclosed"  onChange={(index) => setActiveTab(index === 0 ? 'products' : index === 1 ? 'instock' : 'orders')}>
         
         <TabList>
@@ -192,6 +209,7 @@ console.log('Filters:', filters);
               }
           </TabPanel>
           <TabPanel>
+          <Button  colorScheme='teal' variant='outline' m={10} >save</Button>
             <Table variant="simple">
               <Thead>
                 <Tr>
@@ -223,7 +241,7 @@ console.log('Filters:', filters);
           </TabPanel>
           <TabPanel>
             <Stack direction="row" spacing={4} m={10}>
-            <Checkbox
+            {/* <Checkbox
                 isChecked={filters.delivered}
                 onChange={() => handleFilterChange("delivered")}
               >
@@ -234,7 +252,14 @@ console.log('Filters:', filters);
                 onChange={() => handleFilterChange("inProcces")}
               >
                 In Process
-              </Checkbox>
+              </Checkbox> */}
+              <RadioGroup onChange={handleFilterChange} value={filter}>
+              <Stack spacing={5} direction="row">
+                <Radio value="all">All</Radio>
+                <Radio value="delivered">Delivered</Radio>
+                <Radio value="inProcces">In Process</Radio>
+              </Stack>
+              </RadioGroup>
             </Stack>
             <Table variant="simple">
               <Thead>
