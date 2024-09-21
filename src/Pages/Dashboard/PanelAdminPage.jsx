@@ -12,12 +12,11 @@ import {
   Td,
   Box,
   Stack,
-  Checkbox,
   Button,
   Radio,
   RadioGroup,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useGetProducts } from "../../Hook/useGetProducts";
@@ -27,15 +26,15 @@ import Pagination from "../../Components/Pagination";
 import useDeleteProduct from "../../Hook/useDeleteProduct";
 import { useGetOrders } from "../../Hook/useGetOrders";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 
 
 export default function PanelAdminPage() {
-  const [filters, setFilters] = useState({
-    delivered: false,
-    inProcces: false,
-  });
+  // const [filters, setFilters] = useState({
+  //   delivered: false,
+  //   inProcces: false,
+  // });
   const qc = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState('');
@@ -49,16 +48,73 @@ export default function PanelAdminPage() {
   const {mutate} = useDeleteProduct()
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filter, setFilter] = useState('All');
-  
+  const [searchParams, setSearchParams] = useSearchParams();
+  const deliveryStatus = searchParams.get("deliveryStatus");
+  const [filters, setFilters] = useState({
+    delivered: deliveryStatus === 'true',
+    inProcces: deliveryStatus === 'false',
+  });
 
-const handleFilterChange = (value) => {
-  setFilter(value);
-  setFilters({
-    delivered: value === 'delivered',
-    inProcces: value === 'inProcces',
+  // useEffect(() => {
+  //   setFilters({
+  //     delivered: deliveryStatus === 'true',
+  //     inProcces: deliveryStatus === 'false', 
+  //   });
+  // }, [deliveryStatus]);
+
+
+// const handleFilterChange = (value) => {
+//   setFilter(value);
+//   setFilters({
+//     delivered: value === 'delivered',
+//     inProcces: value === 'inProcces',
+//   });
+// };
+
+const handleFilterChange = (filter) => {
+  setFilters((prev) => {
+    let newFilters = { delivered: false, inProcces: false }; // همه فیلترها به حالت اولیه قرار می گیرند
+
+    
+    if (filter === "delivered") {
+      newFilters.delivered = true;
+      setSearchParams({ deliveryStatus: 'true' });
+    } else if (filter === "inProcces") {
+      newFilters.inProcces = true;
+      setSearchParams({ deliveryStatus: 'false' });
+    } else if (filter === "all") {
+      searchParams.delete("deliveryStatus");
+      setSearchParams(searchParams);
+    }
+
+    return newFilters;
   });
 };
+
+
+
+const filteredOrders = ordersData?.data?.orders.filter((order) => {
+  if (filters.delivered && order.deliveryStatus === true) {
+    return true;
+  }
+  if (filters.inProcces && order.deliveryStatus === false) {
+    return true;
+  }
+  if (!filters.delivered && !filters.inProcces) {
+    return true;
+  }
+  return false;
+});
+
+useEffect(() => {
+ 
+  if (activeTab !== 'orders') {
+    searchParams.delete("deliveryStatus");
+    setSearchParams(searchParams);
+  }
+}, [activeTab, searchParams, setSearchParams]);
+
+
 
   const openModal = () =>{
     console.log("modal open");
@@ -98,20 +154,8 @@ const handleFilterChange = (value) => {
 
  
 
-  const filteredOrders = ordersData?.data?.orders.filter((order) => {
-    if (filters.delivered && order.deliveryStatus === true) {
-      return true;
-    }
-    if (filters.inProcces && order.deliveryStatus === false) {
-      return true;
-    }
-    if (!filters.delivered && !filters.inProcces) {
-      return true;
-    }
-    return false;
-  });
-console.log(filteredOrders);
-console.log('Filters:', filters);
+ 
+
 
   
   // const handleFilterChange = (filter) => {
@@ -253,11 +297,11 @@ console.log('Filters:', filters);
               >
                 In Process
               </Checkbox> */}
-              <RadioGroup onChange={handleFilterChange} value={filter}>
+              <RadioGroup >
               <Stack spacing={5} direction="row">
-                <Radio value="all">All</Radio>
-                <Radio value="delivered">Delivered</Radio>
-                <Radio value="inProcces">In Process</Radio>
+                <Radio value="all" onChange={() => handleFilterChange("all")}>All</Radio>
+                <Radio value="delivered" isChecked={filters.delivered} onChange={() => handleFilterChange("delivered")}>Delivered</Radio>
+                <Radio value="inProcces" isChecked={filters.inProcces} onChange={() => handleFilterChange("inProcces")}>In Process</Radio>
               </Stack>
               </RadioGroup>
             </Stack>
