@@ -7,6 +7,7 @@ import ContactUsPage from "../Pages/ContactUsPage";
 import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
 import AdminLoginPage from "../Pages/AdminLoginPage";
 import UserLoginPage from "../Pages/UserLoginPage";
+import ProtectedRoute from "../Components/ProtectedRout";
 
 
 
@@ -20,7 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/panel-admin",
     element:
-      <PanelAdminPage/>
+    <ProtectedRoute>
+       <PanelAdminPage/>
+    </ProtectedRoute>
+     
     
   },
   {
@@ -51,3 +55,24 @@ const router = createBrowserRouter([
 export const AppRoute = () =>{
   return <RouterProvider router={router}/>
 }
+
+
+
+const App = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+};
+
