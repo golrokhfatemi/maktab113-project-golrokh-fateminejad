@@ -18,3 +18,14 @@ console.log(e.message);
 
 }
 }
+
+export const editProduct = async(id) => {
+  console.log(id);  
+try{ 
+const res = await httpRequest.patch(`/api/products/${id}/`)
+return res
+}catch(e){
+console.log(e.message);
+
+}
+}

@@ -17,23 +17,35 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useEffect, useState } from "react";
 import httpRequest from "../../Services/http-request";
 import { useMutation, useQueryClient } from "react-query";
+import useEditProduct from "../../Hook/useEditProduct";
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
   const queryClient = useQueryClient();
-  const { mutate } = useCreateProduct({
-   
-  });
-
+  const { mutate } = useCreateProduct({});
 
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubCategories] = useState([]);
   const [filteredSubcategories, setFilteredSubCategories] = useState([]);
+  const { mutate: editProduct } = useEditProduct();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    subcategory: "",
+    price: "",
+    quantity: "",
+    discount: "",
+    brand: "",
+    description: "",
+    thumbnail: "",
+    image: "",
+  });
 
   const handleDescriptionChange = (event, editor) => {
     const data = editor.getData();
     setDescription(data);
-    console.log(description);
+    setValue("description", data);
   };
 
   // const navigate = useNavigate();
@@ -117,6 +129,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     formData.append("brand", values.brand);
     formData.append("discount", values.discount);
     formData.append("description", description);
+
     if (values.thumbnail && values.thumbnail[0]) {
       formData.append("thumbnail", values.thumbnail[0]);
     }
@@ -134,33 +147,59 @@ const AddProductModal = ({ isOpen, onClose }) => {
     //   }
     // }
     // formData.append("images", values.images[0]);
-    console.log(formData);
+    // console.log(formData);
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }
+    mutate(formData, {
+      onSuccess: () => {
+        // console.log("hi");
 
-    // console.log(values.image[0]);
-    // console.log(values.thumbnail);
-    // console.log(formData.get("upload_images"));
-    // console.log("Before mutate:", formData);
-    mutate(formData,{ onSuccess: () => {
-      console.log("hi");
-      
-      queryClient.invalidateQueries("products");
-      onClose(); 
-    },});
-
-  };
-
-  const AddCategory = () => {
-    const qc = useQueryClient();
-    const { mutate } = useMutation({
-      mutationFn: async (data) => {
-        await httpRequest.post("/api/categories", data);
+        queryClient.invalidateQueries("products");
+        onClose();
       },
-      mutationKey: ["addCategory"],
     });
   };
+
+  useEffect(() => {
+    if (isEditMode && product) {
+      setValue("name", product.name);
+      setValue("category", product.category.name);
+      console.log(product.category.name);
+      setValue("subcategory", product.subcategory.name);
+      console.log(product.subcategory.name);
+      setValue("price", product.price);
+      setValue("quantity", product.quantity);
+      setValue("discount", product.discount);
+      setValue("description", description);
+      setValue("brand", product.brand);
+      setValue("thumbnail", product.thumbnail);
+      setValue("image", product.images);
+    }
+  }, [isEditMode, product, setValue,description]);
+
+  // set description in edit mode
+  useEffect(() => {
+    if (isEditMode && product) {
+      setDescription(product.description);
+      setValue("description", product.description);
+    }
+  }, [isEditMode, product, setValue]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // const AddCategory = () => {
+  //   const qc = useQueryClient();
+  //   const { mutate } = useMutation({
+  //     mutationFn: async (data) => {
+  //       await httpRequest.post("/api/categories", data);
+  //     },
+  //     mutationKey: ["addCategory"],
+  //   });
+  // };
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl">
       <ModalOverlay />
@@ -269,7 +308,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
               />
 
               <TextInput
-                lable={"  Price "}
+                lable={"Price"}
                 name={"price"}
                 register={register("price", {
                   required: {
@@ -315,7 +354,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
                 <label className="text-sm font-bold">Description</label>
                 <CKEditor
                   editor={ClassicEditor}
-                  data="<p>Enter product description here...</p>"
+                  data={description}
                   onChange={handleDescriptionChange}
                 />
               </div>
@@ -375,6 +414,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
       </ModalContent>
     </Modal>
   );
-}
+};
 
 export default AddProductModal;
