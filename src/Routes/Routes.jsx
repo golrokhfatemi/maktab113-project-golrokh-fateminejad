@@ -8,6 +8,7 @@ import PanelAdminPage from "../Pages/Dashboard/PanelAdminPage";
 import AdminLoginPage from "../Pages/AdminLoginPage";
 import UserLoginPage from "../Pages/UserLoginPage";
 import ProtectedRoute from "../Components/ProtectedRout";
+import SingleProductPage from "../Pages/SingleProductPage";
 
 
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "/product/:id",
+        element: <SingleProductPage />,
       },
       {
         path: "aboutus",

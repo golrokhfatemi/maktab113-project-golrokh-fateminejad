@@ -19,7 +19,7 @@ import httpRequest from "../../Services/http-request";
 import { useMutation, useQueryClient } from "react-query";
 import useEditProduct from "../../Hook/useEditProduct";
 
-const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
+const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct}) => {
   const queryClient = useQueryClient();
   const { mutate } = useCreateProduct({});
 
@@ -139,7 +139,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
         formData.append(`images`, values.images[i]);
       }
     }
-
+   
     // formData.append("thumbnail", values.thumbnail[0]);
     // for(const key in values.images){
     //   if(values.images.hasOwnProperty(key)){

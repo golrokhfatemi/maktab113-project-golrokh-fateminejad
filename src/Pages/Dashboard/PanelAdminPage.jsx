@@ -95,7 +95,7 @@ export default function PanelAdminPage() {
 
   const handleFilterChange = (filter) => {
     setFilters((prev) => {
-      let newFilters = { delivered: false, inProcces: false }; // همه فیلترها به حالت اولیه قرار می گیرند
+      let newFilters = { delivered: false, inProcces: false }; 
 
       if (filter === "delivered") {
         newFilters.delivered = true;

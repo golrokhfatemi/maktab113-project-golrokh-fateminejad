@@ -8,6 +8,8 @@ const httpRequest = axios.create({
     baseURL : BASE_URL ,
 })
 
+
+
 httpRequest.interceptors.request.use((config) => {
     const accessTokn = Cookies.get("accessToken")
     if(accessTokn){
@@ -48,3 +50,6 @@ httpRequest.interceptors.response.use((config) => {
     
 
 export default httpRequest
+
+
+

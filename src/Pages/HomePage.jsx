@@ -14,11 +14,13 @@ export default function HomePage() {
       productsData?.data?.products.map((item) => (
         <Card key="item.id">
   <CardBody>
+  <Link to={`/product/${item.id}`}>
     <Image
       src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
       alt='Green double couch with wooden legs'
       borderRadius='lg'
     />
+    </Link>
     <Stack mt='6' spacing='3'>
       <Heading size='md'>{item.name}</Heading>
       {/* <Text>
@@ -47,3 +49,8 @@ export default function HomePage() {
     </div>
   )
 }
+
+
+
+
+
