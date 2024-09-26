@@ -57,7 +57,7 @@ export default function SingleProductPage() {
     // </div>
 
     <Card maxW="2lg" className="px-10">
-  <CardBody className="bg-teal-50 rounded-lg flex items-center justify-center h-full m-4">
+  <CardBody className=" flex items-center justify-center h-full m-4">
     <Stack mt="6" spacing="3">
       <Box className="flex flex-row">
         <Box className="flex flex-col p-16 gap-5 w-full">
@@ -73,7 +73,7 @@ export default function SingleProductPage() {
             </BreadcrumbItem>
           </Breadcrumb>
 
-          <Text>{product.data.product.description}</Text>
+          <Text class="line-clamp-4">{product.data.product.description}</Text>
           <Text color="teal" fontSize="xl">
             Price: $ {product.data.product.price}
           </Text>
@@ -85,7 +85,7 @@ export default function SingleProductPage() {
         {/* اضافه کردن کلاس‌های flex برای والد تصویر */}
         <Box className="flex items-center justify-center">
           <Image
-            width={1000}
+            width={600}
             height={400}
             src={`http://${product.data.product.images}`}
             borderRadius="lg"
