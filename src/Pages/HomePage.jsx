@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardBody,ButtonGroup, CardFooter, Stack, Heading, Text, Button, Image,Divider } from '@chakra-ui/react'
 import { useGetProducts } from "../Hook/useGetProducts";
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const itemsPerPage = 100;
@@ -14,7 +15,7 @@ export default function HomePage() {
       productsData?.data?.products.map((item) => (
         <Card key="item.id">
   <CardBody>
-  <Link to={`/product/${item.id}`}>
+  <Link to={`/products/${item._id}`}>
     <Image
       src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
       alt='Green double couch with wooden legs'
