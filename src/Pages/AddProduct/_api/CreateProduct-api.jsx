@@ -1,5 +1,6 @@
-import httpRequest from "../../../Services/Http-request";
+
 import Cookies from "js-cookie";
+import httpRequest from "../../../Services/http-request";
 
 export const createProduct = async(formData) =>{
     const token = Cookies.get("accessToken"); 

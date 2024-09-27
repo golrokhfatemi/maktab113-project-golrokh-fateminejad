@@ -19,10 +19,15 @@ console.log(e.message);
 }
 }
 
-export const editProduct = async(id) => {
+export const editProduct = async(id , formData) => {
   console.log(id);  
 try{ 
-const res = await httpRequest.patch(`/api/products/${id}/`)
+  console.log(formData.thumbnail);
+  const t = formData.get("thumbnail")
+  if(!(t instanceof File)){
+    formData.delete("thumbnail")
+  }
+const res = await httpRequest.patch(`/api/products/${id}/` , formData)
 return res
 }catch(e){
 console.log(e.message);

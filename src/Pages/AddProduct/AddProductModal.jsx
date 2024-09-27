@@ -19,7 +19,7 @@ import httpRequest from "../../Services/http-request";
 import { useMutation, useQueryClient } from "react-query";
 import useEditProduct from "../../Hook/useEditProduct";
 
-const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct}) => {
+const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
   const queryClient = useQueryClient();
   const { mutate } = useCreateProduct({});
 
@@ -28,6 +28,14 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
   const [subcategories, setSubCategories] = useState([]);
   const [filteredSubcategories, setFilteredSubCategories] = useState([]);
   const { mutate: editProduct } = useEditProduct();
+  const [previousImage,setPreviousImage] = useState(null)
+  const [selectedProduct,setSelectedProduct] = useState("")
+
+  // useEffect(() => {
+  //   if (selectedProduct && selectedProduct.thumbnailUrl) {
+  //     setPreviousImage(selectedProduct.thumbnailUrl);
+  //   }
+  // }, [selectedProduct]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -59,7 +67,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
   } = useForm({
     defaultValues: {
       name: "",
-      category: "",
+      category: "hi",
       subcategory: "",
       price: "",
       quantity: "",
@@ -151,23 +159,40 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }
-    mutate(formData, {
-      onSuccess: () => {
-        // console.log("hi");
 
-        queryClient.invalidateQueries("products");
-        onClose();
-      },
-    });
+    if (isEditMode) {
+      console.log(selectedProduct._id); 
+      editProduct({ id: selectedProduct._id, formData }, {
+        onSuccess: () => {
+          queryClient.invalidateQueries("products");
+          reset()
+          onClose();
+          console.log(selectedProduct);
+          
+        },
+      });
+    } else {
+      mutate(formData, {
+        onSuccess: () => {
+          queryClient.invalidateQueries("products");
+          reset()
+          onClose();
+        },
+      });
+    }
+    
+
   };
 
   useEffect(() => {
     if (isEditMode && product) {
+      console.log("Product:", product); 
+      setSelectedProduct(product);
       setValue("name", product.name);
-      setValue("category", product.category.name);
-      console.log(product.category.name);
-      setValue("subcategory", product.subcategory.name);
-      console.log(product.subcategory.name);
+      setValue("category",product.category._id);
+      // console.log(product.category.name);
+      setValue("subcategory", product.subcategory._id);
+      // console.log(product.subcategory.name);
       setValue("price", product.price);
       setValue("quantity", product.quantity);
       setValue("discount", product.discount);
@@ -181,15 +206,14 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
   // set description in edit mode
   useEffect(() => {
     if (isEditMode && product) {
+      console.log(product);
+      
       setDescription(product.description);
       setValue("description", product.description);
     }
   }, [isEditMode, product, setValue]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+ 
 
   // const AddCategory = () => {
   //   const qc = useQueryClient();
@@ -350,6 +374,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
                 type={"number"}
                 errors={errors}
               />
+
               <div style={{ width: "100%" }}>
                 <label className="text-sm font-bold">Description</label>
                 <CKEditor
@@ -358,6 +383,11 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
                   onChange={handleDescriptionChange}
                 />
               </div>
+
+
+
+
+
 
               <div className="m-5 w-full flex flex-row justify-start items-center ">
                 <div className="px-8">
@@ -380,6 +410,12 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode ,selectedProduct
                     {errors.image.message}
                   </p>
                 )}
+                {previousImage && (
+                    <div className="ml-4">
+                      <img src={previousImage} alt="Previous Thumbnail" className="w-20 h-20 object-cover" />
+                    </div>
+  )}
+                <div>hello</div>
               </div>
 
               <div className="m-5 w-full flex flex-row justify-start items-center ">
