@@ -385,10 +385,6 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
               </div>
 
 
-
-
-
-
               <div className="m-5 w-full flex flex-row justify-start items-center ">
                 <div className="px-8">
                   <label

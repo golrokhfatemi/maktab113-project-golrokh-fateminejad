@@ -15,6 +15,7 @@ import {
   Button,
   Radio,
   RadioGroup,
+  Input,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
@@ -55,6 +56,34 @@ export default function PanelAdminPage() {
     delivered: deliveryStatus === "true",
     inProcces: deliveryStatus === "false",
   });
+
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [editableValues, setEditableValues] = useState({ price: '', quantity: '' });
+
+const handleEditClick = (product) => {
+  setEditingProductId(product._id);
+  setEditableValues({
+    price: product.price,
+    quantity: product.quantity,
+  });
+};
+
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setEditableValues((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+const handleSave = () => {
+  // Save logic here, like calling an API with updated values
+  console.log('Saving values:', editableValues);
+  // After saving, reset the editing state
+  setEditingProductId(null);
+};
+ 
+
 
   const openAddProductModal = () => {
     setIsEditMode(false); 
@@ -175,6 +204,11 @@ export default function PanelAdminPage() {
     navigate("/admin-login");
   };
 
+
+
+
+  
+
   return (
     <div className="p-6">
       <Box display="flex" justifyContent="flex-end" mb={4}>
@@ -281,9 +315,11 @@ export default function PanelAdminPage() {
             )}
           </TabPanel>
           <TabPanel>
-            <Button colorScheme="teal" variant="outline" m={10}>
+            <Button colorScheme="teal" variant="outline" m={10} onClick={handleSave} >
               save
             </Button>
+          
+
             <Table variant="simple">
               <Thead>
                 <Tr>
@@ -293,13 +329,44 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                {productsData?.data?.products.map((item) => (
+                {/* {productsData?.data?.products.map((item) => (
                   <Tr key={item.id}>
                     <Td>{item.slugname}</Td>
                     <Td>{item.price}$</Td>
                     <Td>{item.quantity}</Td>
                   </Tr>
-                ))}
+                ))} */}
+              {productsData?.data?.products.map((item) => (
+    <Tr key={item._id}>
+      <Td>{item.slugname}</Td>
+      <Td>
+        {editingProductId === item._id ? (
+          <Input
+            name="price"
+            value={editableValues.price}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span onClick={() => handleEditClick(item)}>{item.price}$</span>
+        )}
+      </Td>
+      <Td>
+        {editingProductId === item._id ? (
+          <Input
+            name="quantity"
+            value={editableValues.quantity}
+            onChange={handleInputChange}
+          />
+        ) : (
+          <span onClick={() => handleEditClick(item)}>{item.quantity}</span>
+        )}
+      </Td>
+    </Tr>
+  ))}
+
+
+
+
               </Tbody>
             </Table>
             {productsData?.total && (
