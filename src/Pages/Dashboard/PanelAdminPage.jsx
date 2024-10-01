@@ -21,13 +21,14 @@ import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useGetProducts } from "../../Hook/useGetProducts";
-import { useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import AddProductModal from "../AddProduct/AddProductModal";
 import Pagination from "../../Components/Pagination";
 import useDeleteProduct from "../../Hook/useDeleteProduct";
 import { useGetOrders } from "../../Hook/useGetOrders";
 import Cookies from "js-cookie";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import httpRequest from "../../Services/http-request";
 
 export default function PanelAdminPage() {
   // const [filters, setFilters] = useState({
@@ -57,31 +58,68 @@ export default function PanelAdminPage() {
     inProcces: deliveryStatus === "false",
   });
 
-  const [editingProductId, setEditingProductId] = useState(null);
-  const [editableValues, setEditableValues] = useState({ price: '', quantity: '' });
+  const [editingProductId, setEditingProductId] = useState("");
+  const [editableValues, setEditableValues] = useState({});
+  // ذخیره محصولات ادیت شده
+  const [editedProducts, setEditedProducts] = useState([]);
 
-const handleEditClick = (product) => {
-  setEditingProductId(product._id);
-  setEditableValues({
-    price: product.price,
-    quantity: product.quantity,
+  const queryClient = useQueryClient();
+
+  const { mutate: updateProduct } = useMutation({
+    mutationFn: (updatedProduct) => {
+      return httpRequest.patch(`/api/products/${updatedProduct._id}`, updatedProduct);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries('products');
+    },
+    onError: (error) => {
+      console.error('Error updating product:', error);
+    },
   });
-};
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setEditableValues((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+  const handleEditClick = (item) => {
+    setEditingProductId(item._id);
+    setEditableValues((prev) => ({
+      ...prev,
+      [item._id]: {
+        price: item.price,
+        quantity: item.quantity,
+      },
+    }));
+  };
 
-const handleSave = () => {
-  // Save logic here, like calling an API with updated values
-  console.log('Saving values:', editableValues);
-  // After saving, reset the editing state
-  setEditingProductId(null);
-};
+  const handleInputChange = (e, productId) => {
+    const { name, value } = e.target;
+  
+    setEditableValues((prev) => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleSave = () => {
+    console.log('Saving values:', editableValues);
+
+    // const promisEdited = editedProducts.map((item) => httpRequest.patch(`/api/products/${item.productId}` , item.body))
+    // Promise.all(promisEdited).then(() => {
+    //   setIsEditMode({productId:null , field:null})
+    //   setEditedProducts([])
+    // }).catch(() => console.log("error")
+    // )
+
+    
+    Object.keys(editableValues).forEach((productId) => {
+      // console.log(Object.keys(editableValues));
+      
+      const updatedProduct = editableValues[productId];
+      
+      updateProduct({ _id: productId, ...updatedProduct });
+    }
+  );
+  };
  
 
 
@@ -343,8 +381,8 @@ const handleSave = () => {
         {editingProductId === item._id ? (
           <Input
             name="price"
-            value={editableValues.price}
-            onChange={handleInputChange}
+            value={editableValues[item._id]?.price || ''}
+            onChange={(e) => handleInputChange(e, item._id)}
           />
         ) : (
           <span onClick={() => handleEditClick(item)}>{item.price}$</span>
@@ -354,8 +392,8 @@ const handleSave = () => {
         {editingProductId === item._id ? (
           <Input
             name="quantity"
-            value={editableValues.quantity}
-            onChange={handleInputChange}
+            value={editableValues[item._id]?.quantity || ''}
+            onChange={(e) => handleInputChange(e, item._id)}
           />
         ) : (
           <span onClick={() => handleEditClick(item)}>{item.quantity}</span>
@@ -421,6 +459,7 @@ const handleSave = () => {
                   <Th>Total Price</Th>
                   <Th>Time of order</Th>
                   <Th>Status</Th>
+                  <Th>Check the order</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -433,6 +472,7 @@ const handleSave = () => {
                       <Td>{item.totalPrice}$</Td>
                       <Td>{new Date(item.createdAt).toLocaleDateString()}</Td>
                       <Td>{item.deliveryStatus ? "Delivered" : "inProcces"}</Td>
+                      <Td><Link>Check</Link></Td>
                     </Tr>
                   ))}
               </Tbody>

@@ -56,7 +56,7 @@ export default function SingleProductPage() {
 
     // </div>
 
-    <Card maxW="2lg" className="px-10">
+    <Card maxW="zlg" className="px-10 m-5 rounded-xl">
   <CardBody className=" flex items-center justify-center h-full m-4">
     <Stack mt="6" spacing="3">
       <Box className="flex flex-row">

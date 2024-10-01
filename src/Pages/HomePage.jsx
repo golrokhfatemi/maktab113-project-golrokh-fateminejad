@@ -25,35 +25,64 @@ export default function HomePage() {
   console.log(productsData);
 
   return (
-    <div className=" grid grid-cols-3 gap-7 mx-5 ">
-      {productsData?.data?.products.map((item) => (
-        <Card key="item.id">
-          <CardBody>
-            <Link to={`/products/${item._id}`}>
-              <Image
-                src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
+    <div>
+      <div className="m-5 rounded-xl"
+        style={{
+          backgroundImage: `url('/images/van-cleef-arpels-perlee-page-famille-joaillerie-2880x1614_perlée_2024.avif')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          height: "60vh",
+          padding: '0 50px',
+          boxSizing: 'border-box',
+          position: 'relative',
+        }}
+      >
+        {/* <Image
+                 src={`/images/van-cleef-arpels-perlee-page-famille-joaillerie-2880x1614_perlée_2024.avif`}
                 borderRadius="lg"
-              />
-            </Link>
+              /> */}
+        <div className="p-5 font-semibold text-6xl stroke-teal-900" style={{
+      position: 'absolute',
+      bottom: '60px', 
+      left: '60px',
+      fontFamily: `'Dancing Script', cursive`,    
+    }}>
+      <div >shine on</div>
+      <div>shine bright</div>
+      <div>Be unique</div>
+    </div>
+      </div>
+      <div className=" grid grid-cols-3 gap-7 m-5 ">
+        {productsData?.data?.products.map((item) => (
+          <Card key="item.id">
+            <CardBody >
+              <Link to={`/products/${item._id}`}>
+                <Image
+                  src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
+                  borderRadius="lg"
+                />
+              </Link>
 
-            <Stack mt="8" spacing="6">
-              <Heading size="md">{item.name}</Heading>
-              <Text>{item.description}</Text>
-            </Stack>
-          </CardBody>
-          <Divider />
+              <Stack mt="8" spacing="6">
+                <Heading size="md">{item.name}</Heading>
+                <Text>{item.description}</Text>
+              </Stack>
+            </CardBody>
+            <Divider />
 
-          <Flex padding={6} align="center">
-            <Text color="blue.600" fontSize="xl">
-              ${item.price}
-            </Text>
-            <Spacer />
-            <Button variant="solid" colorScheme="teal">
-              Add To Cart
-            </Button>
-          </Flex>
-        </Card>
-      ))}
+            <Flex padding={6} align="center">
+              <Text color="blue.600" fontSize="xl">
+                ${item.price}
+              </Text>
+              <Spacer />
+              <Button variant="solid" colorScheme="teal">
+                Add To Cart
+              </Button>
+            </Flex>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

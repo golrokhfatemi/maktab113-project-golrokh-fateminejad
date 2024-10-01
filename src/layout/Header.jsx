@@ -23,8 +23,10 @@ import {
   PopoverHeader,
   PopoverBody,
 } from '@chakra-ui/react'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import httpRequest from '../Services/http-request';
+
 
 
 
@@ -36,6 +38,10 @@ export default function Header() {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [products, setProducts] = useState([]);
+  
   
 
   // const toggleMenu = () => {
@@ -56,13 +62,37 @@ export default function Header() {
   //   };
   // }, []);
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
+
+  const fetchProducts = async (category) => {
+    try {
+      const response = await httpRequest.get(`/api/products?category=${category}`);
+      setProducts(response.data.products); // محصولات فیلتر شده
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchProducts(selectedCategory);
+    }
+  }, [selectedCategory]);
+
+  const handleCategoryClick = (category) => {
+    setSelectedCategory(category); // انتخاب کتگوری و فیلتر محصولات
+  };
+
+
   return (
-    <div className='m-8  p-4'>
+    <div className='px-10 py-5'>
         <header className="flex justify-between ">
         <div className='flex flex-row gap-4'>
         <CiMenuBurger  className='text-2xl w-10 cursor-pointer' onClick={onOpen} /> 
         <p>Menu</p>
         </div>
+        <Link href="/">
+        <div className='text-3xl ط'><b>B</b>e<b>L</b>ova</div>
+        </Link>
             
             <div className='flex flex-row gap-4'>
             
@@ -126,10 +156,10 @@ export default function Header() {
               <Collapse in={isProductsOpen}>
                 <Box pl={20}>
                   <div className='flex flex-col gap-5 pt-6'>
-                  <Link href="#" fontSize="lg">Jewelry</Link>
-                  <Link href="#" fontSize="lg" >Watches</Link>
-                  <Link href="#" fontSize="lg" >Luxury Pen</Link>
-                  <Link href="#" fontSize="lg" >Keychain</Link>
+                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Jewelry')}>Jewelry</Link>
+                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Watches')}>Watches</Link>
+                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Luxury Pen')}>Luxury Pen</Link>
+                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Keychain')}>Keychain</Link>
                   </div>
                 </Box>
               </Collapse>
