@@ -1,6 +1,6 @@
 import httpRequest from "../../../Services/http-request";
 
-export const getProducts = async (page = 1, itemsPerPage = 2, category) => {
+export const getProducts = async (page = 1, itemsPerPage = 10, category) => {
   const url = `/api/products?page=${page}&limit=${itemsPerPage}${
     category && `&category=${category}`
   }`;
