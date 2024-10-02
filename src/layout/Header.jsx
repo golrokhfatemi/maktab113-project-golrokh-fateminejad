@@ -35,6 +35,7 @@ import httpRequest from '../Services/http-request';
 export default function Header({ setSelectedCategory }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,10 +60,26 @@ export default function Header({ setSelectedCategory }) {
   // }, []);
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
 
-  const handleCategoryClick = (category) => {
-    console.log(category);
 
-    setSelectedCategory(category);
+  const fetchCategories = async () => {
+    try {
+      const response = await httpRequest.get('/api/categories');
+      console.log(response.data.data.categories);
+      
+      setCategories(response.data.data.categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleCategoryClick = (categoryId) => {
+    console.log(categoryId);
+
+    setSelectedCategory(categoryId);
     onClose();
   };
 
@@ -77,7 +94,7 @@ export default function Header({ setSelectedCategory }) {
           <p>Menu</p>
         </div>
         <Link href="/">
-          <div className="text-3xl ط">
+          <div className="text-3xl">
             <b>B</b>e<b>L</b>ova
           </div>
         </Link>
@@ -157,9 +174,19 @@ export default function Header({ setSelectedCategory }) {
               <Collapse in={isProductsOpen}>
                 <Box pl={20}>
                   <div className="flex flex-col gap-5 pt-6">
-                    <Link
+
+                  {categories.map((category) => (
+                      <Link
+                        key={category._id}
+                        fontSize="lg"
+                        onClick={() => handleCategoryClick(category._id)}
+                      >
+                        {category.name}
+                      </Link>
+                    ))}
+                    {/* <Link
                       fontSize="lg"
-                      onClick={() => handleCategoryClick("Jewelry")}
+                      onClick={() => handleCategoryClick("66f1c1642894236d4656d2f2")}
                     >
                       Jewelry
                     </Link>
@@ -173,7 +200,7 @@ export default function Header({ setSelectedCategory }) {
                     </Link>
                     <Link
                       fontSize="lg"
-                      onClick={() => handleCategoryClick("Luxury Pen")}
+                      onClick={() => handleCategoryClick("66f5bb8772d3643ca1f51c7a")}
                     >
                       Luxury Pen
                     </Link>
@@ -182,7 +209,7 @@ export default function Header({ setSelectedCategory }) {
                       onClick={() => handleCategoryClick("Keychain")}
                     >
                       Keychain
-                    </Link>
+                    </Link> */}
                   </div>
                 </Box>
               </Collapse>
