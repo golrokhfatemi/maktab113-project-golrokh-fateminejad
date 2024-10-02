@@ -1,7 +1,9 @@
 import httpRequest from "../../../Services/http-request";
 
-export const getProducts = async (page = 1, itemsPerPage = 2) => {
-  const url = `/api/products?page=${page}&limit=${itemsPerPage}`;
+export const getProducts = async (page = 1, itemsPerPage = 2, category) => {
+  const url = `/api/products?page=${page}&limit=${itemsPerPage}${
+    category && `&category=${category}`
+  }`;
   const res = await httpRequest.get(url);
   // console.log(res.data);
   return res.data;

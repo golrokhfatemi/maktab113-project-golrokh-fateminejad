@@ -1,9 +1,9 @@
 import { useQuery } from "react-query"
 import { getProducts } from "../Pages/Dashboard/_api/Products-api"
 
-export const useGetProducts = (page , itemsPerPage)=>{
-    return useQuery({
-        queryFn : () => getProducts(page , itemsPerPage),
-        queryKey :["products" , page,itemsPerPage]
-    })
-}
+export const useGetProducts = (page, itemsPerPage, category) => {
+  return useQuery({
+    queryFn: () => getProducts(page, itemsPerPage, category),
+    queryKey: ["products", page, itemsPerPage, category],
+  });
+};

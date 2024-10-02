@@ -32,22 +32,18 @@ import httpRequest from '../Services/http-request';
 
 
 
-export default function Header({setProducts}) {
+export default function Header({ setSelectedCategory }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  const [selectedCategory, setSelectedCategory] = useState(null);
+
   // const [products, setProducts] = useState([]);
-  
-  
 
   // const toggleMenu = () => {
   //   setIsMenuOpen(!isMenuOpen);
   // }
-
 
   // const handleClickOutside = (event) => {
   //   if (event.target.closest('.menu-container') === null) {
@@ -63,59 +59,45 @@ export default function Header({setProducts}) {
   // }, []);
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
 
-  const fetchProducts = async (category) => {
-    try {
-      const response = await httpRequest.get(`/api/products?category=${category}`);
-      
-      console.log(response);
-      console.log(response.data.products);
-      setProducts(response.data.data.products); 
-
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedCategory) {
-      fetchProducts(selectedCategory);
-    }
-  }, [selectedCategory]);
-
   const handleCategoryClick = (category) => {
     console.log(category);
-    
-    setSelectedCategory(category); 
+
+    setSelectedCategory(category);
     onClose();
   };
 
-
   return (
-    <div className='px-10 py-5'>
-        <header className="flex justify-between ">
-        <div className='flex flex-row gap-4'>
-        <CiMenuBurger  className='text-2xl w-10 cursor-pointer' onClick={onOpen} /> 
-        <p>Menu</p>
+    <div className="px-10 py-5">
+      <header className="flex justify-between ">
+        <div className="flex flex-row gap-4">
+          <CiMenuBurger
+            className="text-2xl w-10 cursor-pointer"
+            onClick={onOpen}
+          />
+          <p>Menu</p>
         </div>
         <Link href="/">
-        <div className='text-3xl ط'><b>B</b>e<b>L</b>ova</div>
+          <div className="text-3xl ط">
+            <b>B</b>e<b>L</b>ova
+          </div>
         </Link>
-            
-            <div className='flex flex-row gap-4'>
-            
-            <Popover
+
+        <div className="flex flex-row gap-4">
+          <Popover
             isOpen={isPopoverOpen}
             onOpen={() => setIsPopoverOpen(true)}
             onClose={() => setIsPopoverOpen(false)}
             placement="right-end"
           >
             <PopoverTrigger>
-              <MdOutlinePhoneInTalk className='text-2xl cursor-pointer' />
+              <MdOutlinePhoneInTalk className="text-2xl cursor-pointer" />
             </PopoverTrigger>
             <PopoverContent bg="gray.800" color="white" p={4}>
               <PopoverArrow />
               <PopoverCloseButton />
-              <PopoverHeader fontWeight="bold">Contact Information</PopoverHeader>
+              <PopoverHeader fontWeight="bold">
+                Contact Information
+              </PopoverHeader>
               <PopoverBody>
                 <Box>
                   <p>Phone: +1234567890</p>
@@ -124,19 +106,18 @@ export default function Header({setProducts}) {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-              <MdOutlineMail className='text-2xl cursor-pointer'/>
-            </div>
-        </header>
-        <Drawer
+          <MdOutlineMail className="text-2xl cursor-pointer" />
+        </div>
+      </header>
+      <Drawer
         isOpen={isOpen}
-        placement='left'
+        placement="left"
         onClose={onClose}
         finalFocusRef={btnRef}
       >
         <DrawerOverlay />
         <DrawerContent bg="#5d877d" color="white">
           <DrawerCloseButton />
-          
 
           {/* <DrawerBody className='flex flex-col gap-6 justify-start mt-16 '>
             <Link>HOME</Link>
@@ -146,43 +127,80 @@ export default function Header({setProducts}) {
             <Link>CONTACT US</Link>
             
           </DrawerBody> */}
-          <DrawerBody className='flex flex-col gap-6 justify-start mt-16'>
+          <DrawerBody className="flex flex-col gap-6 justify-start mt-16">
             <Box>
-              <Link href="#" fontSize="lg">HOME</Link>
+              <Link href="#" fontSize="lg">
+                HOME
+              </Link>
             </Box>
             <Box>
-              <Box display="flex" alignItems="center" onClick={toggleProducts} cursor="pointer">
+              <Box
+                display="flex"
+                alignItems="center"
+                onClick={toggleProducts}
+                cursor="pointer"
+              >
                 <Link fontSize="lg">PRODUCTS</Link>
                 <IconButton
                   aria-label="Toggle Products Submenu"
-                  icon={isProductsOpen ? <ChevronUpIcon  boxSize={6} color="white" /> : <ChevronDownIcon  boxSize={6} color="white" />}
+                  icon={
+                    isProductsOpen ? (
+                      <ChevronUpIcon boxSize={6} color="white" />
+                    ) : (
+                      <ChevronDownIcon boxSize={6} color="white" />
+                    )
+                  }
                   variant="link"
                   ml={2}
                 />
               </Box>
               <Collapse in={isProductsOpen}>
                 <Box pl={20}>
-                  <div className='flex flex-col gap-5 pt-6'>
-                  <Link fontSize="lg" onClick={() => handleCategoryClick('Jewelry')}>Jewelry</Link>
-                  <Link fontSize="lg" onClick={() => handleCategoryClick('66f1cb142894236d4656d384')}>Watches</Link>
-                  <Link fontSize="lg" onClick={() => handleCategoryClick('Luxury Pen')}>Luxury Pen</Link>
-                  <Link fontSize="lg" onClick={() => handleCategoryClick('Keychain')}>Keychain</Link>
+                  <div className="flex flex-col gap-5 pt-6">
+                    <Link
+                      fontSize="lg"
+                      onClick={() => handleCategoryClick("Jewelry")}
+                    >
+                      Jewelry
+                    </Link>
+                    <Link
+                      fontSize="lg"
+                      onClick={() =>
+                        handleCategoryClick("66f1cb142894236d4656d384")
+                      }
+                    >
+                      Watches
+                    </Link>
+                    <Link
+                      fontSize="lg"
+                      onClick={() => handleCategoryClick("Luxury Pen")}
+                    >
+                      Luxury Pen
+                    </Link>
+                    <Link
+                      fontSize="lg"
+                      onClick={() => handleCategoryClick("Keychain")}
+                    >
+                      Keychain
+                    </Link>
                   </div>
                 </Box>
               </Collapse>
             </Box>
             <Box>
-              <Link fontSize="lg" cursor="pointer" onClick={onClose}>ABOUT US</Link>
+              <Link fontSize="lg" cursor="pointer" onClick={onClose}>
+                ABOUT US
+              </Link>
             </Box>
             <Box>
-              <Link fontSize="lg" cursor="pointer" onClick={onClose}>CONTACT US</Link>
+              <Link fontSize="lg" cursor="pointer" onClick={onClose}>
+                CONTACT US
+              </Link>
             </Box>
           </DrawerBody>
-
-          
-        </DrawerContent >
+        </DrawerContent>
       </Drawer>
-        {/* {isMenuOpen && (
+      {/* {isMenuOpen && (
         <div 
         className={`fixed top-0 left-0 h-full w-64 bg-white transform transition-transform duration-300 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} shadow-lg z-50`}
       >
@@ -197,8 +215,7 @@ export default function Header({setProducts}) {
       </div>
       )} */}
     </div>
-    
-  )
+  );
 }
 
 

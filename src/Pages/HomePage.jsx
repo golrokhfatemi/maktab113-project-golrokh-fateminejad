@@ -21,54 +21,51 @@ import { Link, useOutletContext } from "react-router-dom";
 export default function HomePage() {
   const itemsPerPage = 100;
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
-  const [selectedCategory ,products] = useOutletContext();
+  const [selectedCategory] = useOutletContext();
+  const { data: productsData } = useGetProducts(
+    currentPage,
+    itemsPerPage,
+    selectedCategory
+  );
   // console.log(productsData);
-
-
-  useEffect(() => {
-    if (selectedCategory) {
-      // Fetch products based on selectedCategory
-    }
-  }, [selectedCategory]);
-console.log(products);
 
   return (
     <div>
-      <div className="m-5 rounded-xl"
+      <div
+        className="m-5 rounded-xl"
         style={{
           backgroundImage: `url('/images/van-cleef-arpels-perlee-page-famille-joaillerie-2880x1614_perlée_2024.avif')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           height: "60vh",
-          padding: '0 50px',
-          boxSizing: 'border-box',
-          position: 'relative',
+          padding: "0 50px",
+          boxSizing: "border-box",
+          position: "relative",
         }}
       >
         {/* <Image
                  src={`/images/van-cleef-arpels-perlee-page-famille-joaillerie-2880x1614_perlée_2024.avif`}
                 borderRadius="lg"
               /> */}
-        <div className="p-5 font-semibold text-6xl stroke-teal-900" style={{
-      position: 'absolute',
-      bottom: '60px', 
-      left: '60px',
-      fontFamily: `'Dancing Script', cursive`,    
-    }}>
-      <div >shine on</div>
-      <div>shine bright</div>
-      <div>Be unique</div>
-    </div>
+        <div
+          className="p-5 font-semibold text-6xl stroke-teal-900"
+          style={{
+            position: "absolute",
+            bottom: "60px",
+            left: "60px",
+            fontFamily: `'Dancing Script', cursive`,
+          }}
+        >
+          <div>shine on</div>
+          <div>shine bright</div>
+          <div>Be unique</div>
+        </div>
       </div>
       <div className=" grid grid-cols-3 gap-7 m-5 ">
-        
-        {products.map((item) => (
-          
-          
+        {productsData.data.products.map((item) => (
           <Card key="item.id">
-            <CardBody >
+            <CardBody>
               <Link to={`/products/${item._id}`}>
                 <Image
                   src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}

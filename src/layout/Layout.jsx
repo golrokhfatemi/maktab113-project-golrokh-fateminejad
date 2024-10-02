@@ -6,15 +6,14 @@ import { useState } from "react";
 
 export default function Layout() {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [products,setProducts] = useState([])
-  console.log(products);
+
   
   
   return (
     <div>
-      <Header setSelectedCategory={setSelectedCategory} setProducts={setProducts}/>
-      <Outlet context={[selectedCategory, products]} />
-      <Footer/>
+      <Header setSelectedCategory={setSelectedCategory} />
+      <Outlet context={[selectedCategory]} />
+      <Footer />
     </div>
   );
 }
