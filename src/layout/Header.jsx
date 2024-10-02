@@ -32,7 +32,7 @@ import httpRequest from '../Services/http-request';
 
 
 
-export default function Header() {
+export default function Header({setProducts}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -40,7 +40,7 @@ export default function Header() {
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   
   
 
@@ -66,7 +66,11 @@ export default function Header() {
   const fetchProducts = async (category) => {
     try {
       const response = await httpRequest.get(`/api/products?category=${category}`);
-      setProducts(response.data.products); // محصولات فیلتر شده
+      
+      console.log(response);
+      console.log(response.data.products);
+      setProducts(response.data.data.products); 
+
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -79,7 +83,10 @@ export default function Header() {
   }, [selectedCategory]);
 
   const handleCategoryClick = (category) => {
-    setSelectedCategory(category); // انتخاب کتگوری و فیلتر محصولات
+    console.log(category);
+    
+    setSelectedCategory(category); 
+    onClose();
   };
 
 
@@ -156,19 +163,19 @@ export default function Header() {
               <Collapse in={isProductsOpen}>
                 <Box pl={20}>
                   <div className='flex flex-col gap-5 pt-6'>
-                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Jewelry')}>Jewelry</Link>
-                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Watches')}>Watches</Link>
-                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Luxury Pen')}>Luxury Pen</Link>
-                  <Link href="#" fontSize="lg" onClick={() => handleCategoryClick('Keychain')}>Keychain</Link>
+                  <Link fontSize="lg" onClick={() => handleCategoryClick('Jewelry')}>Jewelry</Link>
+                  <Link fontSize="lg" onClick={() => handleCategoryClick('66f1cb142894236d4656d384')}>Watches</Link>
+                  <Link fontSize="lg" onClick={() => handleCategoryClick('Luxury Pen')}>Luxury Pen</Link>
+                  <Link fontSize="lg" onClick={() => handleCategoryClick('Keychain')}>Keychain</Link>
                   </div>
                 </Box>
               </Collapse>
             </Box>
             <Box>
-              <Link href="#"  fontSize="lg">ABOUT US</Link>
+              <Link fontSize="lg" cursor="pointer" onClick={onClose}>ABOUT US</Link>
             </Box>
             <Box>
-              <Link href="#"  fontSize="lg">CONTACT US</Link>
+              <Link fontSize="lg" cursor="pointer" onClick={onClose}>CONTACT US</Link>
             </Box>
           </DrawerBody>
 

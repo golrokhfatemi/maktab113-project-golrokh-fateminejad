@@ -44,6 +44,9 @@ export default function PanelAdminPage() {
   // console.log(productsData);
   // console.log(ordersData);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [statusModal , setStatusModal] = useState(false)
+  const [selectedCustomer,setSelectedCustomer] = useState([])
   const [deleteVal, setDeleteVal] = useState({});
   const { mutate } = useDeleteProduct();
   const [isEditMode, setIsEditMode] = useState(false);
@@ -66,8 +69,8 @@ export default function PanelAdminPage() {
   const queryClient = useQueryClient();
 
   const { mutate: updateProduct } = useMutation({
-    mutationFn: (updatedProduct) => {
-      return httpRequest.patch(`/api/products/${updatedProduct._id}`, updatedProduct);
+    mutationFn: (updatedData) => {
+      return httpRequest.patch(`/api/products/${updatedData.id}`,updatedData.updatedProduct);
     },
     onSuccess: () => {
       queryClient.invalidateQueries('products');
@@ -116,7 +119,8 @@ export default function PanelAdminPage() {
       
       const updatedProduct = editableValues[productId];
       
-      updateProduct({ _id: productId, ...updatedProduct });
+      // updateProduct(productId ,{  ...updatedProduct });
+      updateProduct({id:productId , updatedProduct});
     }
   );
   };
@@ -226,6 +230,18 @@ export default function PanelAdminPage() {
   const handleCloseModal = () => {
     setDeleteModal(false);
   };
+
+  const handleShowStatusModal = (order) => {
+    setSelectedOrder(order);
+    // setSelectedCustomer(customer);
+    setStatusModal(true);
+  };
+
+  const handleCloseStatusModal = () => {
+    setStatusModal(false); 
+    // setSelectedOrder(null); // خالی کردن اطلاعات سفارش
+  };
+
   // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
   // console.log(usersData);
 
@@ -472,7 +488,7 @@ export default function PanelAdminPage() {
                       <Td>{item.totalPrice}$</Td>
                       <Td>{new Date(item.createdAt).toLocaleDateString()}</Td>
                       <Td>{item.deliveryStatus ? "Delivered" : "inProcces"}</Td>
-                      <Td><Link>Check</Link></Td>
+                      <Td><Link onClick={() => handleShowStatusModal(item)}>Check</Link></Td>
                     </Tr>
                   ))}
               </Tbody>
@@ -521,6 +537,42 @@ export default function PanelAdminPage() {
           </div>
         </div>
       )}
+
+{/* status Modal */}
+{statusModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-14 rounded-2xl shadow-lg flex flex-col gap-4 w-2/3">
+            <h2>Status</h2>
+            <div className="flex flex-col justify-around gap-4 font-medium text-lg">
+              
+              <div><b>Customer name</b> :   {selectedOrder.user.firstname}   {selectedOrder.user.lastname}</div>
+              <div><b>Customer Address </b>:   {selectedOrder.user.address}</div>
+              <div><b>Customer phone number</b> :   {selectedOrder.user.phoneNumber}</div>
+              <div><b>order time</b> :   {new Date(selectedOrder.createdAt).toLocaleDateString()}</div> 
+              <div><b>deliver time</b> :   {selectedOrder.deliveryTime ? new Date(selectedOrder.deliveryTime).toLocaleDateString() : "Not delivered yet"}</div>
+              <div className="flex flex-row justify-evenly">
+                
+              <button
+                className="bg-slate-800 text-white px-3 py-2 rounded-md m-2"
+                
+              >
+               Delivered
+              </button>
+              <button
+                className="bg-slate-800 text-white px-3 py-2 rounded-md m-2"
+                onClick={handleCloseStatusModal}
+              >
+               close
+              </button>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
     </div>
   );
 }

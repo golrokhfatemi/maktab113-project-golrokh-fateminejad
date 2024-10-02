@@ -15,14 +15,23 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { useGetProducts } from "../Hook/useGetProducts";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useOutletContext } from "react-router-dom";
 
 export default function HomePage() {
   const itemsPerPage = 100;
   const [currentPage, setCurrentPage] = useState(1);
   const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
-  console.log(productsData);
+  const [selectedCategory ,products] = useOutletContext();
+  // console.log(productsData);
+
+
+  useEffect(() => {
+    if (selectedCategory) {
+      // Fetch products based on selectedCategory
+    }
+  }, [selectedCategory]);
+console.log(products);
 
   return (
     <div>
@@ -54,7 +63,10 @@ export default function HomePage() {
     </div>
       </div>
       <div className=" grid grid-cols-3 gap-7 m-5 ">
-        {productsData?.data?.products.map((item) => (
+        
+        {products.map((item) => (
+          
+          
           <Card key="item.id">
             <CardBody >
               <Link to={`/products/${item._id}`}>
