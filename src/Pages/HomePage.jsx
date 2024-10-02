@@ -62,8 +62,8 @@ export default function HomePage() {
           <div>Be unique</div>
         </div>
       </div>
-      {/* <div className=" grid grid-cols-3 gap-7 m-5 ">
-        {productsData.data.products.map((item) => (
+      <div className=" grid grid-cols-3 gap-7 m-5 ">
+        {productsData?.data?.products?.map((item) => (
           <Card key="item.id">
             <CardBody>
               <Link to={`/products/${item._id}`}>
@@ -91,7 +91,7 @@ export default function HomePage() {
             </Flex>
           </Card>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 }
