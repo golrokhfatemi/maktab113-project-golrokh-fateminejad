@@ -1,26 +1,24 @@
+// 
+
 import {
   Card,
-  CardHeader,
   CardBody,
-  ButtonGroup,
-  CardFooter,
+  Button,
   Stack,
   Heading,
   Text,
-  Button,
   Image,
   Divider,
   Flex,
   Spacer,
-  Center,
 } from "@chakra-ui/react";
 import { useGetProducts } from "../Hook/useGetProducts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import ProductCard from "../Components/Card";
 
 export default function HomePage() {
-  const itemsPerPage = 100;
+  const itemsPerPage = 4;
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory] = useOutletContext();
   const { data: productsData } = useGetProducts(
@@ -28,7 +26,21 @@ export default function HomePage() {
     itemsPerPage,
     selectedCategory
   );
-  // console.log(productsData);
+
+  const products = productsData?.data?.products || [];
+
+  // ایجاد یک آبجکت برای دسته‌بندی محصولات
+  const categorizedProducts = products.reduce((acc, item) => {
+    const category = item.category.name; // نام دسته‌بندی
+
+    // اگر دسته‌بندی موجود نیست، آن را اضافه می‌کنیم
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    // محصول را به دسته مربوطه اضافه می‌کنیم
+    acc[category].push(item);
+    return acc;
+  }, {});
 
   return (
     <div>
@@ -45,10 +57,6 @@ export default function HomePage() {
           position: "relative",
         }}
       >
-        {/* <Image
-                 src={`/images/van-cleef-arpels-perlee-page-famille-joaillerie-2880x1614_perlée_2024.avif`}
-                borderRadius="lg"
-              /> */}
         <div
           className="p-5 font-semibold text-6xl stroke-teal-900"
           style={{
@@ -63,37 +71,22 @@ export default function HomePage() {
           <div>Be unique</div>
         </div>
       </div>
-      <div className=" grid grid-cols-3 gap-7 m-5 ">
-        {productsData?.data?.products?.map((item) => (
-          <ProductCard item={item}/>
-          // <Card key="item.id">
-          //   <CardBody>
-          //     <Link to={`/products/${item._id}`}>
-          //       <Image
-          //         src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
-          //         borderRadius="lg"
-          //       />
-          //     </Link>
-
-          //     <Stack mt="8" spacing="6">
-          //       <Heading size="md">{item.name}</Heading>
-          //       <Text>{item.description}</Text>
-          //     </Stack>
-          //   </CardBody>
-          //   <Divider />
-
-          //   <Flex padding={6} align="center">
-          //     <Text color="blue.600" fontSize="xl">
-          //       ${item.price}
-          //     </Text>
-          //     <Spacer />
-          //     <Button variant="solid" colorScheme="teal">
-          //       Add To Cart
-          //     </Button>
-          //   </Flex>
-          // </Card>
+      <div className="p-5">
+      {Object.keys(categorizedProducts).map((category) => (
+          <div key={category} className="mb-10">
+            {/* عنوان دسته‌بندی */}
+            <h2 className="text-2xl font-bold mb-4">{category || 'null'}</h2>
+            
+            {/* محصولات مربوط به این دسته‌بندی */}
+            <div className="grid grid-cols-3 gap-7">
+              {categorizedProducts[category].map((item) => (
+                <ProductCard key={item._id} item={item} />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
+

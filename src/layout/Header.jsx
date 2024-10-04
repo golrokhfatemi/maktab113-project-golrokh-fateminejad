@@ -26,6 +26,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import httpRequest from '../Services/http-request';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 
@@ -37,6 +38,7 @@ export default function Header({ setSelectedCategory }) {
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const navigate = useNavigate();
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -80,6 +82,7 @@ export default function Header({ setSelectedCategory }) {
     console.log(categoryId);
 
     setSelectedCategory(categoryId);
+    navigate(`?category=${categoryId}`);
     onClose();
   };
 
