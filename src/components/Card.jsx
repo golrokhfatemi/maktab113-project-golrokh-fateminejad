@@ -1,39 +1,39 @@
-import { Card, CardHeader, CardBody, CardFooter, Stack, Heading, Text, Button, Image } from '@chakra-ui/react'
+import { Card, CardHeader, CardBody, CardFooter, Stack, Heading, Text, Button, Image, Divider, Flex, Spacer } from '@chakra-ui/react'
+import { Link } from 'react-router-dom'
+import DOMPurify from 'dompurify';
 
-export default function ProductCard() {
+export default function ProductCard({item}) {
+  const cleanDescription = DOMPurify.sanitize(item.description, { ALLOWED_TAGS: [] });
   return (
     <div>
-         <div className='p-7'>HomePage
-      <Card
-  direction={{ base: 'column', sm: 'row' }}
-  overflow='hidden'
-  variant='outline'
->
-  <Image
-    objectFit='cover'
-    maxW={{ base: '100%', sm: '200px' }}
-    src='https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60'
-    alt='Caffe Latte'
-  />
+        <Card key="item.id" className='h-full'>
+            <CardBody>
+              <Link to={`/products/${item._id}`}>
+                <Image
+                  src={`http://localhost:8000/images/products/thumbnails/${item.thumbnail}`}
+                  borderRadius="lg"
+                />
+              </Link>
 
-  <Stack>
-    <CardBody>
-      <Heading size='md'>The perfect latte</Heading>
+              <Stack mt="8" spacing="6">
+                <Heading size="md">{item.name}</Heading>
+                <Text className="line-clamp-6">{cleanDescription}</Text>
+                {/* <Text className="line-clamp-5">{item.description}</Text> */}
+                
+              </Stack>
+            </CardBody>
+            <Divider />
 
-      <Text py='2'>
-        Caffè latte is a coffee beverage of Italian origin made with espresso
-        and steamed milk.
-      </Text>
-    </CardBody>
-
-    <CardFooter>
-      <Button variant='solid' colorScheme='blue'>
-        Buy Latte
-      </Button>
-    </CardFooter>
-  </Stack>
-</Card>
-    </div>
+            <Flex padding={6} align="center">
+              <Text color="blue.600" fontSize="xl">
+                ${item.price}
+              </Text>
+              <Spacer />
+              <Button variant="solid" colorScheme="teal">
+                Add To Cart
+              </Button>
+            </Flex>
+          </Card>
     </div>
   )
 }
