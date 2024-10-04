@@ -62,6 +62,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    resetField,
     setValue,
     watch,
   } = useForm({
@@ -229,7 +230,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add New Product</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton onClick={reset}/>
         <ModalBody>
           <div className="flex flex-row justify-center ">
             <form onSubmit={handleSubmit(onSubmitForm)}>
@@ -411,7 +412,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
                       <img src={previousImage} alt="Previous Thumbnail" className="w-20 h-20 object-cover" />
                     </div>
   )}
-                <div>hello</div>
+                {/* <div>hello</div> */}
               </div>
 
               <div className="m-5 w-full flex flex-row justify-start items-center ">

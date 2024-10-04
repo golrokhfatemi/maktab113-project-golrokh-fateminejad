@@ -44,12 +44,23 @@ export default function PanelAdminPage() {
   // console.log(productsData);
   // console.log(ordersData);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [statusModal , setStatusModal] = useState(false)
-  const [selectedCustomer,setSelectedCustomer] = useState([])
+  const [selectedOrder, setSelectedOrder] = useState({
+    user: {},
+    items: [], 
+    createdAt: null,
+    deliveryTime: null,
+  });
+  const [statusModal, setStatusModal] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState([]);
   const [deleteVal, setDeleteVal] = useState({});
   const { mutate } = useDeleteProduct();
   const [isEditMode, setIsEditMode] = useState(false);
+  // const [EditMode, setEditMode] = useState({
+  //   productId:null,
+  //   field:null
+  // });
+  const[currentValue,setCurrentValue] = useState(0)
+  const[changeList,setChageList] =useState([])
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const navigate = useNavigate();
@@ -61,7 +72,11 @@ export default function PanelAdminPage() {
     inProcces: deliveryStatus === "false",
   });
 
-  const [editingProductId, setEditingProductId] = useState("");
+  // const [editingProductId, setEditingProductId] = useState("");
+  const [editingProductId, setEditingProductId] = useState({
+    productId:null,
+    field:null
+  });;
   const [editableValues, setEditableValues] = useState({});
   // ذخیره محصولات ادیت شده
   const [editedProducts, setEditedProducts] = useState([]);
@@ -70,13 +85,16 @@ export default function PanelAdminPage() {
 
   const { mutate: updateProduct } = useMutation({
     mutationFn: (updatedData) => {
-      return httpRequest.patch(`/api/products/${updatedData.id}`,updatedData.updatedProduct);
+      return httpRequest.patch(
+        `/api/products/${updatedData.id}`,
+        updatedData.updatedProduct
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries('products');
+      queryClient.invalidateQueries("products");
     },
     onError: (error) => {
-      console.error('Error updating product:', error);
+      console.error("Error updating product:", error);
     },
   });
 
@@ -93,7 +111,7 @@ export default function PanelAdminPage() {
 
   const handleInputChange = (e, productId) => {
     const { name, value } = e.target;
-  
+
     setEditableValues((prev) => ({
       ...prev,
       [productId]: {
@@ -103,40 +121,48 @@ export default function PanelAdminPage() {
     }));
   };
 
+  const handleKeyDown = (e,productId,field) =>{
+    if(e.key === "Enter"){
+      setChageList((prev) => [...prev ,{productId,body:{[field]:currentValue}}])
+      setEditingProductId({productId:null , field:null})
+    }else if (e.key === "Escape"){
+      setEditingProductId({productId:null,field:null})
+    }
+  }
+
+
+
   const handleSave = () => {
-    console.log('Saving values:', editableValues);
+    console.log("Saving values:", editableValues);
 
     // const promisEdited = editedProducts.map((item) => httpRequest.patch(`/api/products/${item.productId}` , item.body))
     // Promise.all(promisEdited).then(() => {
-    //   setIsEditMode({productId:null , field:null})
+    //   setEditingProductId({productId , field})
     //   setEditedProducts([])
+    //   // setTimeout(()=>setToastModal(false),2000)
     // }).catch(() => console.log("error")
     // )
 
-    
     Object.keys(editableValues).forEach((productId) => {
       // console.log(Object.keys(editableValues));
-      
-      const updatedProduct = editableValues[productId];
-      
-      // updateProduct(productId ,{  ...updatedProduct });
-      updateProduct({id:productId , updatedProduct});
-    }
-  );
-  };
- 
 
+      const updatedProduct = editableValues[productId];
+
+      // updateProduct(productId ,{  ...updatedProduct });
+      updateProduct({ id: productId, updatedProduct });
+    });
+  };
 
   const openAddProductModal = () => {
-    setIsEditMode(false); 
-    setSelectedProduct(null); 
+    setIsEditMode(false);
+    setSelectedProduct(null);
     setIsModalOpen(true);
   };
 
   const openEditProductModal = (product) => {
     console.log(product);
-    setIsEditMode(true); 
-    setSelectedProduct(product); 
+    setIsEditMode(true);
+    setSelectedProduct(product);
     setIsModalOpen(true);
   };
 
@@ -146,15 +172,12 @@ export default function PanelAdminPage() {
   //   }
   // }, [selectedProduct]);
 
-
   // useEffect(() => {
   //   setFilters({
   //     delivered: deliveryStatus === 'true',
   //     inProcces: deliveryStatus === 'false',
   //   });
   // }, [deliveryStatus]);
-
-
 
   // const handleFilterChange = (value) => {
   //   setFilter(value);
@@ -166,7 +189,7 @@ export default function PanelAdminPage() {
 
   const handleFilterChange = (filter) => {
     setFilters((prev) => {
-      let newFilters = { delivered: false, inProcces: false }; 
+      let newFilters = { delivered: false, inProcces: false };
 
       if (filter === "delivered") {
         newFilters.delivered = true;
@@ -211,7 +234,7 @@ export default function PanelAdminPage() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  
+
   const handleShowDeleteModal = (id) => {
     setDeleteVal(id);
     setDeleteModal(true);
@@ -238,7 +261,7 @@ export default function PanelAdminPage() {
   };
 
   const handleCloseStatusModal = () => {
-    setStatusModal(false); 
+    setStatusModal(false);
     // setSelectedOrder(null); // خالی کردن اطلاعات سفارش
   };
 
@@ -258,11 +281,7 @@ export default function PanelAdminPage() {
     navigate("/admin-login");
   };
 
-
-
-
-  
-
+  // console.log(selectedOrder);
   return (
     <div className="p-6">
       <Box display="flex" justifyContent="flex-end" mb={4}>
@@ -358,7 +377,7 @@ export default function PanelAdminPage() {
                 </Tr> */}
               </Tbody>
             </Table>
-            
+
             {productsData?.total && (
               <Pagination
                 totalItems={productsData?.total}
@@ -369,10 +388,14 @@ export default function PanelAdminPage() {
             )}
           </TabPanel>
           <TabPanel>
-            <Button colorScheme="teal" variant="outline" m={10} onClick={handleSave} >
+            <Button
+              colorScheme="teal"
+              variant="outline"
+              m={10}
+              onClick={handleSave}
+            >
               save
             </Button>
-          
 
             <Table variant="simple">
               <Thead>
@@ -390,37 +413,37 @@ export default function PanelAdminPage() {
                     <Td>{item.quantity}</Td>
                   </Tr>
                 ))} */}
-              {productsData?.data?.products.map((item) => (
-    <Tr key={item._id}>
-      <Td>{item.slugname}</Td>
-      <Td>
-        {editingProductId === item._id ? (
-          <Input
-            name="price"
-            value={editableValues[item._id]?.price || ''}
-            onChange={(e) => handleInputChange(e, item._id)}
-          />
-        ) : (
-          <span onClick={() => handleEditClick(item)}>{item.price}$</span>
-        )}
-      </Td>
-      <Td>
-        {editingProductId === item._id ? (
-          <Input
-            name="quantity"
-            value={editableValues[item._id]?.quantity || ''}
-            onChange={(e) => handleInputChange(e, item._id)}
-          />
-        ) : (
-          <span onClick={() => handleEditClick(item)}>{item.quantity}</span>
-        )}
-      </Td>
-    </Tr>
-  ))}
-
-
-
-
+                {productsData?.data?.products.map((item) => (
+                  <Tr key={item._id}>
+                    <Td>{item.slugname}</Td>
+                    <Td>
+                      {editingProductId === item._id ? (
+                        <Input
+                          name="price"
+                          value={editableValues[item._id]?.price || ""}
+                          onChange={(e) => handleInputChange(e, item._id)}
+                        />
+                      ) : (
+                        <span onClick={() => handleEditClick(item)}>
+                          {item.price}$
+                        </span>
+                      )}
+                    </Td>
+                    <Td>
+                      {editingProductId === item._id ? (
+                        <Input
+                          name="quantity"
+                          value={editableValues[item._id]?.quantity || ""}
+                          onChange={(e) => handleInputChange(e, item._id)}
+                        />
+                      ) : (
+                        <span onClick={() => handleEditClick(item)}>
+                          {item.quantity}
+                        </span>
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
             {productsData?.total && (
@@ -488,7 +511,11 @@ export default function PanelAdminPage() {
                       <Td>{item.totalPrice}$</Td>
                       <Td>{new Date(item.createdAt).toLocaleDateString()}</Td>
                       <Td>{item.deliveryStatus ? "Delivered" : "inProcces"}</Td>
-                      <Td><Link onClick={() => handleShowStatusModal(item)}>Check</Link></Td>
+                      <Td>
+                        <Link onClick={() => handleShowStatusModal(item)}>
+                          Check
+                        </Link>
+                      </Td>
                     </Tr>
                   ))}
               </Tbody>
@@ -515,7 +542,12 @@ export default function PanelAdminPage() {
               } */}
       </Tabs>
 
-      <AddProductModal isOpen={isModalOpen} onClose={closeModal} product={selectedProduct} isEditMode={isEditMode}/>
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        product={selectedProduct}
+        isEditMode={isEditMode}
+      />
       {deleteModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-14 rounded-2xl shadow-lg flex flex-col gap-4">
@@ -538,41 +570,82 @@ export default function PanelAdminPage() {
         </div>
       )}
 
-{/* status Modal */}
-{statusModal && (
+      {/* status Modal */}
+
+      {statusModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-14 rounded-2xl shadow-lg flex flex-col gap-4 w-2/3">
             <h2>Status</h2>
             <div className="flex flex-col justify-around gap-4 font-medium text-lg">
+              <div>
+                <b>Customer name</b> : {selectedOrder.user.firstname}{" "}
+                {selectedOrder.user.lastname}
+              </div>
+              <div>
+                <b>Customer Address </b>: {selectedOrder.user.address}
+              </div>
+              <div>
+                <b>Customer phone number</b> : {selectedOrder.user.phoneNumber}
+              </div>
+              <div>
+                <b>order time</b> :{" "}
+                {new Date(selectedOrder.createdAt).toLocaleDateString()}
+              </div>
+              <div>
+                <b>deliver time</b> :{" "}
+                {selectedOrder.deliveryTime
+                  ? new Date(selectedOrder.deliveryTime).toLocaleDateString()
+                  : "Not delivered yet"}
+              </div>
               
-              <div><b>Customer name</b> :   {selectedOrder.user.firstname}   {selectedOrder.user.lastname}</div>
-              <div><b>Customer Address </b>:   {selectedOrder.user.address}</div>
-              <div><b>Customer phone number</b> :   {selectedOrder.user.phoneNumber}</div>
-              <div><b>order time</b> :   {new Date(selectedOrder.createdAt).toLocaleDateString()}</div> 
-              <div><b>deliver time</b> :   {selectedOrder.deliveryTime ? new Date(selectedOrder.deliveryTime).toLocaleDateString() : "Not delivered yet"}</div>
-              <div className="flex flex-row justify-evenly">
-                
-              <button
-                className="bg-slate-800 text-white px-3 py-2 rounded-md m-2"
-                
-              >
-               Delivered
-              </button>
-              <button
-                className="bg-slate-800 text-white px-3 py-2 rounded-md m-2"
-                onClick={handleCloseStatusModal}
-              >
-               close
-              </button>
-              
+                <table className="w-full mt-4 border-collapse border border-gray-300">
+                  <thead>
+                    <tr>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Product Name
+                      </th>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Quantity
+                      </th>
+                      <th className="border border-gray-300 px-4 py-2">
+                        Price
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tbody>
+  {selectedOrder.items && selectedOrder.items.length > 0 ? (
+    selectedOrder.items.map((item, index) => (
+      <tr key={index}>
+        <td className="border border-gray-300 px-4 py-2">{item.productName}</td>
+        <td className="border border-gray-300 px-4 py-2">{item.quantity}</td>
+        <td className="border border-gray-300 px-4 py-2">${item.price}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="3" className="text-center py-4">No items found</td>
+    </tr>
+  )}
+</tbody>
+
+                  </tbody>
+                </table>
+                <div className="flex flex-row justify-evenly">
+                <button className="bg-slate-800 text-white px-3 py-2 rounded-md m-2">
+                  Delivered
+                </button>
+                <button
+                  className="bg-slate-800 text-white px-3 py-2 rounded-md m-2"
+                  onClick={handleCloseStatusModal}
+                >
+                  close
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-
-
     </div>
   );
 }
