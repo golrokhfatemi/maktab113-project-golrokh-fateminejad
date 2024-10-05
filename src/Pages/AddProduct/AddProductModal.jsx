@@ -430,12 +430,22 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
                   name="images"
                   accept="image/*"
                   {...register("images")}
+                  multiple
                 />
                 {errors.images && (
                   <p className="text-red-600 text-sm  ">
                     {errors.images.message}
                   </p>
                 )}
+
+{product?.images?.length > 0 && (
+    <div className="ml-4 flex space-x-4">
+      {product.images.map((image, index) => (
+        <img key={index} src={image} alt={`Product image ${index}`} className="w-20 h-20 object-cover" />
+      ))}
+    </div>
+  )}
+                
               </div>
 
               <div className="flex justify-around mt-10">
