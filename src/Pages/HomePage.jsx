@@ -29,9 +29,9 @@ export default function HomePage() {
 
   const products = productsData?.data?.products || [];
 
-  // ایجاد یک آبجکت برای دسته‌بندی محصولات
+  
   const categorizedProducts = products.reduce((acc, item) => {
-    const category = item.category.name; // نام دسته‌بندی
+    const category = item.category.name; 
 
     // اگر دسته‌بندی موجود نیست، آن را اضافه می‌کنیم
     if (!acc[category]) {

@@ -59,8 +59,6 @@ export default function PanelAdminPage() {
   //   productId:null,
   //   field:null
   // });
-  const[currentValue,setCurrentValue] = useState(0)
-  const[changeList,setChageList] =useState([])
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const navigate = useNavigate();
@@ -73,13 +71,11 @@ export default function PanelAdminPage() {
   });
 
   // const [editingProductId, setEditingProductId] = useState("");
-  const [editingProductId, setEditingProductId] = useState({
-    productId:null,
-    field:null
-  });;
+  const [editingFields, setEditingFields] = useState({});
   const [editableValues, setEditableValues] = useState({});
-  // ذخیره محصولات ادیت شده
-  const [editedProducts, setEditedProducts] = useState([]);
+  const [originalValues, setOriginalValues] = useState({});
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false);
+  
 
   const queryClient = useQueryClient();
 
@@ -98,59 +94,78 @@ export default function PanelAdminPage() {
     },
   });
 
-  const handleEditClick = (item) => {
-    setEditingProductId(item._id);
+  const handleEditClick = (item, field) => {
+    // برای ذخیره فیلد در حال ویرایش
+    setEditingFields((prev) => ({
+      ...prev,
+      [item._id]: {
+        ...prev[item._id],
+        [field]: true,
+      },
+    }));
+
     setEditableValues((prev) => ({
       ...prev,
       [item._id]: {
-        price: item.price,
-        quantity: item.quantity,
+        ...prev[item._id],
+        [field]: item[field],
       },
     }));
+    setOriginalValues((prev) => ({
+      ...prev,
+      [item._id]: {
+        ...prev[item._id],
+        [field]: item[field],
+      },
+    }));
+    setIsSaveEnabled(true);
   };
 
-  const handleInputChange = (e, productId) => {
-    const { name, value } = e.target;
-
+  const handleInputChange = (e, productId, field) => {
+    const { value } = e.target;
     setEditableValues((prev) => ({
       ...prev,
       [productId]: {
         ...prev[productId],
-        [name]: value,
+        [field]: value,
       },
     }));
   };
 
-  const handleKeyDown = (e,productId,field) =>{
-    if(e.key === "Enter"){
-      setChageList((prev) => [...prev ,{productId,body:{[field]:currentValue}}])
-      setEditingProductId({productId:null , field:null})
-    }else if (e.key === "Escape"){
-      setEditingProductId({productId:null,field:null})
+  const handleKeyDown = (e, productId, field) => {
+    if (e.key === "Enter") {
+      // ذخیره کردن مقادیر ویرایش شده
+      Object.keys(editableValues).forEach((productId) => {
+        const updatedProduct = editableValues[productId];
+        updateProduct({
+          id: productId,
+          updatedProduct,
+        });
+      });
+      
+      // خارج شدن از حالت ویرایش برای همه سلول‌ها
+      setEditingFields({ productId: null, field: null });
+      setIsSaveEnabled(false);
+    } else if (e.key === "Escape") {
+      // لغو ویرایش
+      setEditingFields({ productId: null, field: null });
     }
-  }
+  };
+  
 
 
 
   const handleSave = () => {
-    console.log("Saving values:", editableValues);
-
-    // const promisEdited = editedProducts.map((item) => httpRequest.patch(`/api/products/${item.productId}` , item.body))
-    // Promise.all(promisEdited).then(() => {
-    //   setEditingProductId({productId , field})
-    //   setEditedProducts([])
-    //   // setTimeout(()=>setToastModal(false),2000)
-    // }).catch(() => console.log("error")
-    // )
+    // console.log("Saving values:", editableValues);
 
     Object.keys(editableValues).forEach((productId) => {
-      // console.log(Object.keys(editableValues));
-
       const updatedProduct = editableValues[productId];
-
-      // updateProduct(productId ,{  ...updatedProduct });
       updateProduct({ id: productId, updatedProduct });
     });
+    // بعد از ذخیره کردن، فیلدهای در حال ویرایش را غیر فعال کن
+  setEditingFields({});
+  setIsSaveEnabled(false);
+    
   };
 
   const openAddProductModal = () => {
@@ -406,44 +421,37 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-                {/* {productsData?.data?.products.map((item) => (
-                  <Tr key={item.id}>
-                    <Td>{item.slugname}</Td>
-                    <Td>{item.price}$</Td>
-                    <Td>{item.quantity}</Td>
-                  </Tr>
-                ))} */}
-                {productsData?.data?.products.map((item) => (
-                  <Tr key={item._id}>
-                    <Td>{item.slugname}</Td>
-                    <Td>
-                      {editingProductId === item._id ? (
-                        <Input
-                          name="price"
-                          value={editableValues[item._id]?.price || ""}
-                          onChange={(e) => handleInputChange(e, item._id)}
-                        />
-                      ) : (
-                        <span onClick={() => handleEditClick(item)}>
-                          {item.price}$
-                        </span>
-                      )}
-                    </Td>
-                    <Td>
-                      {editingProductId === item._id ? (
-                        <Input
-                          name="quantity"
-                          value={editableValues[item._id]?.quantity || ""}
-                          onChange={(e) => handleInputChange(e, item._id)}
-                        />
-                      ) : (
-                        <span onClick={() => handleEditClick(item)}>
-                          {item.quantity}
-                        </span>
-                      )}
-                    </Td>
-                  </Tr>
-                ))}
+              {productsData?.data?.products.map((item) => (
+            <Tr key={item._id}>
+              <Td>{item.slugname}</Td>
+              <Td>
+                {editingFields[item._id]?.price ? (
+                  <Input
+                    name="price"
+                    value={editableValues[item._id]?.price || ""}
+                    onChange={(e) => handleInputChange(e, item._id, "price")}
+                    onKeyDown={(e) => handleKeyDown(e, item._id, "price")}
+                    autoFocus
+                  />
+                ) : (
+                  <span onClick={() => handleEditClick(item, "price")}>{item.price}$</span>
+                )}
+              </Td>
+              <Td>
+                {editingFields[item._id]?.quantity ? (
+                  <Input
+                    name="quantity"
+                    value={editableValues[item._id]?.quantity || ""}
+                    onChange={(e) => handleInputChange(e, item._id, "quantity")}
+                    onKeyDown={(e) => handleKeyDown(e, item._id, "quantity")}
+                    autoFocus
+                  />
+                ) : (
+                  <span onClick={() => handleEditClick(item, "quantity")}>{item.quantity}</span>
+                )}
+              </Td>
+            </Tr>
+          ))}
               </Tbody>
             </Table>
             {productsData?.total && (

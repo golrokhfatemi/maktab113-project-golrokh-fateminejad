@@ -107,12 +107,13 @@ export default function Header({ setSelectedCategory }) {
             isOpen={isPopoverOpen}
             onOpen={() => setIsPopoverOpen(true)}
             onClose={() => setIsPopoverOpen(false)}
-            placement="right-end"
+            placement="bottom-start"
+            
           >
             <PopoverTrigger>
               <MdOutlinePhoneInTalk className="text-2xl cursor-pointer" />
             </PopoverTrigger>
-            <PopoverContent bg="gray.800" color="white" p={4}>
+            <PopoverContent bg="gray.800" color="white" p={6} >
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverHeader fontWeight="bold">
@@ -126,7 +127,10 @@ export default function Header({ setSelectedCategory }) {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-          <MdOutlineMail className="text-2xl cursor-pointer" />
+
+
+          {/* <MdOutlineMail className="text-2xl cursor-pointer" /> */}
+          
         </div>
       </header>
       <Drawer
