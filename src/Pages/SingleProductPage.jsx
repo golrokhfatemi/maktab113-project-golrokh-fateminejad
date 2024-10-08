@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import httpRequest from "../Services/Http-request";
 import {
   Box,
@@ -18,11 +18,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
+import { CartContext } from "../Services/Context/Context";
 
 export default function SingleProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     console.log("Product ID:", id);
@@ -108,7 +110,11 @@ export default function SingleProductPage() {
               <Text color="teal" fontSize="xl">
                 Price: $ {product.data.product.price}
               </Text>
-              <Button colorScheme="teal" size="lg">
+              <Button
+                colorScheme="teal"
+                size="lg"
+                onClick={() => addToCart(product.data.product)}
+              >
                 Add To Cart
               </Button>
             </Box>

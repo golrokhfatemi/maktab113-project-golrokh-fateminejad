@@ -1,8 +1,5 @@
-
-
-
-import { MdOutlineMail, MdOutlinePhoneInTalk } from 'react-icons/md';
-import { CiMenuBurger } from 'react-icons/ci';
+import { MdOutlineMail, MdOutlinePhoneInTalk } from "react-icons/md";
+import { CiMenuBurger } from "react-icons/ci";
 import {
   Drawer,
   DrawerBody,
@@ -22,22 +19,25 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-} from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import httpRequest from '../Services/http-request';
-import { Navigate, useNavigate } from 'react-router-dom';
-
-
-
-
-
+  Badge,
+} from "@chakra-ui/react";
+import React, { useContext, useEffect, useState } from "react";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import httpRequest from "../Services/http-request";
+import { Navigate, useNavigate } from "react-router-dom";
+import { FiShoppingCart } from "react-icons/fi";
+import Cart from "../Pages/Cart";
+import { CartContext } from "../Services/Context/Context";
 
 export default function Header({ setSelectedCategory }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isProductsOpen, setIsProductsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [cartIsOpen, setCartIsOpen] = useState(false);
+  // const [cartData, setCartData] = useState([]);
+  const{cartData ,setCartData} = useContext(CartContext)
+  const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const btnRef = React.useRef();
   // const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,21 +62,26 @@ export default function Header({ setSelectedCategory }) {
   // }, []);
   const toggleProducts = () => setIsProductsOpen(!isProductsOpen);
 
-
   const fetchCategories = async () => {
     try {
-      const response = await httpRequest.get('/api/categories');
-      console.log(response.data.data.categories);
-      
+      const response = await httpRequest.get("/api/categories");
+      // console.log(response.data.data.categories);
+
       setCategories(response.data.data.categories);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      // console.error('Error fetching categories:', error);
     }
   };
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    // Calculate the number of items in the Cart
+    const count = cartData.length;
+    setCartCount(count);
+  }, [cartData]);
 
   const handleCategoryClick = (categoryId) => {
     console.log(categoryId);
@@ -108,12 +113,40 @@ export default function Header({ setSelectedCategory }) {
             onOpen={() => setIsPopoverOpen(true)}
             onClose={() => setIsPopoverOpen(false)}
             placement="bottom-start"
-            
           >
             <PopoverTrigger>
               <MdOutlinePhoneInTalk className="text-2xl cursor-pointer" />
             </PopoverTrigger>
-            <PopoverContent bg="gray.800" color="white" p={6} >
+            {/* <FiShoppingCart className="text-2xl cursor-pointer"  onClick={() => setCartIsOpen(true)}/> */}
+            <Box position="relative" display="inline-block">
+              
+                
+                  <FiShoppingCart
+                  backgroundColor="none"
+                    className="text-2xl cursor-pointer "
+                    onClick={() => setCartIsOpen(true)}
+                  />
+                  
+                
+                
+              
+              {cartCount > 0 && (
+                <Badge
+                  
+                  borderRadius="full"
+                  position="absolute"
+                  top="-2"
+                  right="-4"
+                  fontSize="0.8em"
+                  backgroundColor="#a2dbcc"
+                  
+                >
+                  {cartCount}
+                </Badge>
+              )}
+            </Box>
+
+            <PopoverContent bg="gray.800" color="white" p={6}>
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverHeader fontWeight="bold">
@@ -128,11 +161,15 @@ export default function Header({ setSelectedCategory }) {
             </PopoverContent>
           </Popover>
 
-
           {/* <MdOutlineMail className="text-2xl cursor-pointer" /> */}
-          
         </div>
       </header>
+      <Cart
+        isOpen={cartIsOpen}
+        onClose={() => setCartIsOpen(false)}
+        cartData={cartData}
+        setCartData={setCartData}
+      />
       <Drawer
         isOpen={isOpen}
         placement="left"
@@ -181,8 +218,7 @@ export default function Header({ setSelectedCategory }) {
               <Collapse in={isProductsOpen}>
                 <Box pl={20}>
                   <div className="flex flex-col gap-5 pt-6">
-
-                  {categories.map((category) => (
+                    {categories.map((category) => (
                       <Link
                         key={category._id}
                         fontSize="lg"
@@ -251,5 +287,3 @@ export default function Header({ setSelectedCategory }) {
     </div>
   );
 }
-
-

@@ -1,4 +1,4 @@
-// 
+//
 
 import {
   Card,
@@ -13,9 +13,10 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { useGetProducts } from "../Hook/useGetProducts";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import ProductCard from "../Components/Card";
+import { CartContext } from "../Services/Context/Context";
 
 export default function HomePage() {
   const itemsPerPage = 4;
@@ -26,12 +27,16 @@ export default function HomePage() {
     itemsPerPage,
     selectedCategory
   );
+  const {addToCart} = useContext(CartContext)
+  
+  const [cartData, setCartData] = useState(() => {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  });
 
   const products = productsData?.data?.products || [];
 
-  
   const categorizedProducts = products.reduce((acc, item) => {
-    const category = item.category.name; 
+    const category = item.category.name;
 
     // اگر دسته‌بندی موجود نیست، آن را اضافه می‌کنیم
     if (!acc[category]) {
@@ -41,6 +46,39 @@ export default function HomePage() {
     acc[category].push(item);
     return acc;
   }, {});
+
+  // به‌روزرسانی سبد خرید
+  // const addToCart = (item) => {
+  //   const existingProduct = cartData.find((product) => product.id === item._id);
+  //   console.log("press add to cart");
+
+  //   if (existingProduct) {
+      
+  //     const updatedCart = cartData.map((product) =>
+  //       product.id === item._id
+  //         ? { ...product, count: product.count + 1 }
+  //         : product
+  //     );
+  //     setCartData(updatedCart);
+  //     localStorage.setItem("cart", JSON.stringify(updatedCart));
+  //     console.log(updatedCart);
+  //   } else {
+      
+  //     const updatedCart = [
+  //       ...cartData,
+  //       {
+  //         id: item._id,
+  //         name: item.name,
+  //         count: 1,
+  //         thumbnail: item.thumbnail,
+  //         price: item.price,
+  //       }, 
+  //     ];
+  //     setCartData(updatedCart);
+  //     localStorage.setItem("cart", JSON.stringify(updatedCart));
+  //     console.log(updatedCart);
+  //   }
+  // };
 
   return (
     <div>
@@ -72,15 +110,13 @@ export default function HomePage() {
         </div>
       </div>
       <div className="p-5">
-      {Object.keys(categorizedProducts).map((category) => (
+        {Object.keys(categorizedProducts).map((category) => (
           <div key={category} className="mb-10">
-            {/* عنوان دسته‌بندی */}
-            <h2 className="text-2xl font-bold mb-4">{category || 'null'}</h2>
-            
-            {/* محصولات مربوط به این دسته‌بندی */}
+            <h2 className="text-2xl font-bold mb-4">{category || "null"}</h2>
+
             <div className="grid grid-cols-3 gap-7">
               {categorizedProducts[category].map((item) => (
-                <ProductCard key={item._id} item={item} />
+                <ProductCard key={item._id} item={item} addToCart={addToCart} />
               ))}
             </div>
           </div>
@@ -89,4 +125,3 @@ export default function HomePage() {
     </div>
   );
 }
-
