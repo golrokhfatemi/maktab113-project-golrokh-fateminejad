@@ -58,13 +58,17 @@ import {
     ModalBody,
     ModalCloseButton,
     Image,
+    Button,
+    Box,
   } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../Services/Context/Context";
+import { useNavigate} from "react-router-dom";
   
   const Cart = ({ isOpen, onClose}) => {
     const [cartItems, setCartItems] = useState([]);
     const {cartData , setCartData} = useContext(CartContext)
+    const navigate = useNavigate()
 
 //       // برای همگام‌سازی هر بار که cartData تغییر کرد
 //   useEffect(() => {
@@ -94,6 +98,11 @@ useEffect(() => {
     };
   }, [setCartData]);
 
+  const handleFinalizeCart = () => {
+    onClose(); 
+    navigate('/finalcartconfirm'); 
+  };
+
   
     return (
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -122,7 +131,12 @@ useEffect(() => {
                 </div>
               </div>
             ))
+            
           )}
+          <Box className=" flex justify-center">
+          <Button colorScheme="teal" onClick={handleFinalizeCart}>Finalize The Cart</Button>
+          </Box>
+          
         </ModalBody>
           </ModalBody>
         </ModalContent>

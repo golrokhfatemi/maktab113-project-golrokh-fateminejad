@@ -80,7 +80,7 @@ export default function SingleProductPage() {
 
     // </div>
 
-    <Card maxW="zlg" className=" m-5 rounded-xl">
+    <Card maxW="zlg" className=" m-7 rounded-xl px-16 py-5">
       <CardBody className=" flex  justify-center h-full gap-3 ">
         <Stack mt="6" spacing="3">
           <Box className="flex flex-row gap-32">
@@ -121,15 +121,15 @@ export default function SingleProductPage() {
 
             <Box className="felx flex-col">
               {/* اضافه کردن کلاس‌های flex برای والد تصویر */}
-              <Box className="flex items-center justify-center">
-                <Button onClick={handlePrev}>{"<"}</Button>
+              <Box className="flex items-center justify-center p-7">
+                <button onClick={handlePrev} className="p-5">{"<"}</button>
                 <Image
                   width={600}
                   height={400}
                   src={`http://${images[currentImageIndex]}`}
                   borderRadius="lg"
                 />
-                <Button onClick={handleNext}>{">"}</Button>
+                <button onClick={handleNext} className="p-5">{">"}</button>
               </Box>
               {/* نقاط زیر تصویر (Indicators) */}
               <Box display="flex" mt={4} justifyContent="center" gap={2}>

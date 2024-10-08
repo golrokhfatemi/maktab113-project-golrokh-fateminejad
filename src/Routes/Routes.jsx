@@ -9,6 +9,7 @@ import AdminLoginPage from "../Pages/AdminLoginPage";
 import UserLoginPage from "../Pages/UserLoginPage";
 import ProtectedRoute from "../Components/ProtectedRout";
 import SingleProductPage from "../Pages/SingleProductPage";
+import FinalizeCartPage from "../Pages/FinalizeCartPage";
 
 
 
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "contactus",
         element: <ContactUsPage />,
+      },
+      {
+        path: "finalcartconfirm",
+        element: <FinalizeCartPage />,
       },
     ],
   },

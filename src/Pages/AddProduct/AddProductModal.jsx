@@ -28,8 +28,8 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
   const [subcategories, setSubCategories] = useState([]);
   const [filteredSubcategories, setFilteredSubCategories] = useState([]);
   const { mutate: editProduct } = useEditProduct();
-  const [previousImage,setPreviousImage] = useState(null)
-  const [selectedProduct,setSelectedProduct] = useState("")
+  const [previousImage, setPreviousImage] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState("");
 
   // useEffect(() => {
   //   if (selectedProduct && selectedProduct.thumbnailUrl) {
@@ -148,7 +148,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
         formData.append(`images`, values.images[i]);
       }
     }
-   
+
     // formData.append("thumbnail", values.thumbnail[0]);
     // for(const key in values.images){
     //   if(values.images.hasOwnProperty(key)){
@@ -162,35 +162,35 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
     }
 
     if (isEditMode) {
-      console.log(selectedProduct._id); 
-      editProduct({ id: selectedProduct._id, formData }, {
-        onSuccess: () => {
-          queryClient.invalidateQueries("products");
-          reset()
-          onClose();
-          console.log(selectedProduct);
-          
-        },
-      });
+      console.log(selectedProduct._id);
+      editProduct(
+        { id: selectedProduct._id, formData },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries("products");
+            reset();
+            onClose();
+            console.log(selectedProduct);
+          },
+        }
+      );
     } else {
       mutate(formData, {
         onSuccess: () => {
           queryClient.invalidateQueries("products");
-          reset()
+          reset();
           onClose();
         },
       });
     }
-    
-
   };
 
   useEffect(() => {
     if (isEditMode && product) {
-      console.log("Product:", product); 
+      console.log("Product:", product);
       setSelectedProduct(product);
       setValue("name", product.name);
-      setValue("category",product.category._id);
+      setValue("category", product.category._id);
       // console.log(product.category.name);
       setValue("subcategory", product.subcategory._id);
       // console.log(product.subcategory.name);
@@ -202,19 +202,17 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
       setValue("thumbnail", product.thumbnail);
       setValue("image", product.images);
     }
-  }, [isEditMode, product, setValue,description]);
+  }, [isEditMode, product, setValue, description]);
 
   // set description in edit mode
   useEffect(() => {
     if (isEditMode && product) {
       console.log(product);
-      
+
       setDescription(product.description);
       setValue("description", product.description);
     }
   }, [isEditMode, product, setValue]);
-
- 
 
   // const AddCategory = () => {
   //   const qc = useQueryClient();
@@ -230,7 +228,7 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add New Product</ModalHeader>
-        <ModalCloseButton onClick={reset}/>
+        <ModalCloseButton onClick={reset} />
         <ModalBody>
           <div className="flex flex-row justify-center ">
             <form onSubmit={handleSubmit(onSubmitForm)}>
@@ -385,7 +383,6 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
                 />
               </div>
 
-
               <div className="m-5 w-full flex flex-row justify-start items-center ">
                 <div className="px-8">
                   <label
@@ -408,10 +405,14 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
                   </p>
                 )}
                 {previousImage && (
-                    <div className="ml-4">
-                      <img src={previousImage} alt="Previous Thumbnail" className="w-20 h-20 object-cover" />
-                    </div>
-  )}
+                  <div className="ml-4">
+                    <img
+                      src={previousImage}
+                      alt="Previous Thumbnail"
+                      className="w-20 h-20 object-cover"
+                    />
+                  </div>
+                )}
                 {/* <div>hello</div> */}
               </div>
 
@@ -438,14 +439,18 @@ const AddProductModal = ({ isOpen, onClose, product, isEditMode }) => {
                   </p>
                 )}
 
-{product?.images?.length > 0 && (
-    <div className="ml-4 flex space-x-4">
-      {product.images.map((image, index) => (
-        <img key={index} src={image} alt={`Product image ${index}`} className="w-20 h-20 object-cover" />
-      ))}
-    </div>
-  )}
-                
+                {product?.images?.length > 0 && (
+                  <div className="ml-4 flex space-x-4">
+                    {product.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Product image ${index}`}
+                        className="w-20 h-20 object-cover"
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-around mt-10">
