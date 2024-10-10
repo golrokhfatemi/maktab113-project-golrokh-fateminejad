@@ -49,6 +49,8 @@ export default function FinalizeCartPage() {
 //     }
 //   };
 
+
+
 const handleSubmit = (e) => {
     e.preventDefault();
     console.log("hi");

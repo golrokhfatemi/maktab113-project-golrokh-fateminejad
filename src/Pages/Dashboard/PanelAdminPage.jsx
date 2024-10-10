@@ -45,13 +45,14 @@ export default function PanelAdminPage() {
   // console.log(ordersData);
   const [deleteModal, setDeleteModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState({
-    user: {},
-    items: [], 
+    // user: {},
+    userId: "",
+    items: [],
     createdAt: null,
-    deliveryTime: null,
+    deliveryDate: null,
   });
   const [statusModal, setStatusModal] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState([]);
+  // const [selectedCustomer, setSelectedCustomer] = useState([]);
   const [deleteVal, setDeleteVal] = useState({});
   const { mutate } = useDeleteProduct();
   const [isEditMode, setIsEditMode] = useState(false);
@@ -75,7 +76,6 @@ export default function PanelAdminPage() {
   const [editableValues, setEditableValues] = useState({});
   const [originalValues, setOriginalValues] = useState({});
   const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-  
 
   const queryClient = useQueryClient();
 
@@ -134,7 +134,7 @@ export default function PanelAdminPage() {
 
   const handleKeyDown = (e, productId, field) => {
     if (e.key === "Enter") {
-      // ذخیره کردن مقادیر ویرایش شده
+      // save edited items
       Object.keys(editableValues).forEach((productId) => {
         const updatedProduct = editableValues[productId];
         updateProduct({
@@ -142,18 +142,15 @@ export default function PanelAdminPage() {
           updatedProduct,
         });
       });
-      
-      // خارج شدن از حالت ویرایش برای همه سلول‌ها
+
+      //Exist editing mode for all cells
       setEditingFields({ productId: null, field: null });
       setIsSaveEnabled(false);
     } else if (e.key === "Escape") {
-      // لغو ویرایش
+      //  cancle edit
       setEditingFields({ productId: null, field: null });
     }
   };
-  
-
-
 
   const handleSave = () => {
     // console.log("Saving values:", editableValues);
@@ -162,10 +159,9 @@ export default function PanelAdminPage() {
       const updatedProduct = editableValues[productId];
       updateProduct({ id: productId, updatedProduct });
     });
-    // بعد از ذخیره کردن، فیلدهای در حال ویرایش را غیر فعال کن
-  setEditingFields({});
-  setIsSaveEnabled(false);
-    
+    // After saving, disable editing fields
+    setEditingFields({});
+    setIsSaveEnabled(false);
   };
 
   const openAddProductModal = () => {
@@ -270,6 +266,8 @@ export default function PanelAdminPage() {
   };
 
   const handleShowStatusModal = (order) => {
+    console.log(order);
+
     setSelectedOrder(order);
     // setSelectedCustomer(customer);
     setStatusModal(true);
@@ -277,7 +275,7 @@ export default function PanelAdminPage() {
 
   const handleCloseStatusModal = () => {
     setStatusModal(false);
-    // setSelectedOrder(null); // خالی کردن اطلاعات سفارش
+    // setSelectedOrder(null);
   };
 
   // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
@@ -421,37 +419,47 @@ export default function PanelAdminPage() {
                 </Tr>
               </Thead>
               <Tbody>
-              {productsData?.data?.products.map((item) => (
-            <Tr key={item._id}>
-              <Td>{item.slugname}</Td>
-              <Td>
-                {editingFields[item._id]?.price ? (
-                  <Input
-                    name="price"
-                    value={editableValues[item._id]?.price || ""}
-                    onChange={(e) => handleInputChange(e, item._id, "price")}
-                    onKeyDown={(e) => handleKeyDown(e, item._id, "price")}
-                    autoFocus
-                  />
-                ) : (
-                  <span onClick={() => handleEditClick(item, "price")}>{item.price}$</span>
-                )}
-              </Td>
-              <Td>
-                {editingFields[item._id]?.quantity ? (
-                  <Input
-                    name="quantity"
-                    value={editableValues[item._id]?.quantity || ""}
-                    onChange={(e) => handleInputChange(e, item._id, "quantity")}
-                    onKeyDown={(e) => handleKeyDown(e, item._id, "quantity")}
-                    autoFocus
-                  />
-                ) : (
-                  <span onClick={() => handleEditClick(item, "quantity")}>{item.quantity}</span>
-                )}
-              </Td>
-            </Tr>
-          ))}
+                {productsData?.data?.products.map((item) => (
+                  <Tr key={item._id}>
+                    <Td>{item.slugname}</Td>
+                    <Td>
+                      {editingFields[item._id]?.price ? (
+                        <Input
+                          name="price"
+                          value={editableValues[item._id]?.price || ""}
+                          onChange={(e) =>
+                            handleInputChange(e, item._id, "price")
+                          }
+                          onKeyDown={(e) => handleKeyDown(e, item._id, "price")}
+                          autoFocus
+                        />
+                      ) : (
+                        <span onClick={() => handleEditClick(item, "price")}>
+                          {item.price}$
+                        </span>
+                      )}
+                    </Td>
+                    <Td>
+                      {editingFields[item._id]?.quantity ? (
+                        <Input
+                          name="quantity"
+                          value={editableValues[item._id]?.quantity || ""}
+                          onChange={(e) =>
+                            handleInputChange(e, item._id, "quantity")
+                          }
+                          onKeyDown={(e) =>
+                            handleKeyDown(e, item._id, "quantity")
+                          }
+                          autoFocus
+                        />
+                      ) : (
+                        <span onClick={() => handleEditClick(item, "quantity")}>
+                          {item.quantity}
+                        </span>
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
             {productsData?.total && (
@@ -581,10 +589,10 @@ export default function PanelAdminPage() {
       {/* status Modal */}
 
       {statusModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 overflow-x-auto">
           <div className="bg-white p-14 rounded-2xl shadow-lg flex flex-col gap-4 w-2/3">
             <h2>Status</h2>
-            <div className="flex flex-col justify-around gap-4 font-medium text-lg">
+            <div className="flex flex-col justify-around gap-2 font-medium text-lg">
               <div>
                 <b>Customer name</b> : {selectedOrder.user.firstname}{" "}
                 {selectedOrder.user.lastname}
@@ -601,45 +609,53 @@ export default function PanelAdminPage() {
               </div>
               <div>
                 <b>deliver time</b> :{" "}
-                {selectedOrder.deliveryTime
-                  ? new Date(selectedOrder.deliveryTime).toLocaleDateString()
+                {selectedOrder.deliveryDate
+                  ? new Date(selectedOrder.deliveryDate).toLocaleDateString()
                   : "Not delivered yet"}
               </div>
-              
-                <table className="w-full mt-4 border-collapse border border-gray-300">
-                  <thead>
-                    <tr>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Product Name
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Quantity
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2">
-                        Price
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <tbody>
-  {selectedOrder.items && selectedOrder.items.length > 0 ? (
-    selectedOrder.items.map((item, index) => (
-      <tr key={index}>
-        <td className="border border-gray-300 px-4 py-2">{item.productName}</td>
-        <td className="border border-gray-300 px-4 py-2">{item.quantity}</td>
-        <td className="border border-gray-300 px-4 py-2">${item.price}</td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="3" className="text-center py-4">No items found</td>
-    </tr>
-  )}
-</tbody>
 
-                  </tbody>
-                </table>
-                <div className="flex flex-row justify-evenly">
+              <table className="min-w-full mt-4 border-collapse border border-gray-300">
+                <thead>
+                  <tr>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Product Name
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Quantity
+                    </th>
+                    <th className="border border-gray-300 px-4 py-2">
+                      Price
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                    {selectedOrder.products &&
+                    selectedOrder.products.length > 0 ? (
+                      selectedOrder.products.map((item, index) => (
+                        <tr key={index}>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.product.name}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {item.count}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            ${item.product.price}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="text-center py-4">
+                          No items found
+                        </td>
+                      </tr>
+                    )}
+                  
+                </tbody>
+              </table>
+              <div className="flex flex-row justify-evenly">
                 <button className="bg-slate-800 text-white px-3 py-2 rounded-md m-2">
                   Delivered
                 </button>
