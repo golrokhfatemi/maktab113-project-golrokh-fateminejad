@@ -36,6 +36,9 @@ export default function AdminLoginPage() {
         console.log(res)
         Cookies.set("accessToken" , res.token.accessToken)
         Cookies.set("refreshToken" , res.token.refreshToken)
+        console.log(res.token.refreshToken);
+        
+        Cookies.set("userId", res.data?.user?._id);
         navigate('/panel-admin')
       }
     })

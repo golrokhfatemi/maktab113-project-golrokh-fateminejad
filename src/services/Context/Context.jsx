@@ -1,10 +1,11 @@
 import { createContext, useEffect, useState } from "react";
 
-// ایجاد Context برای مدیریت سبد خرید
+
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartData, setCartData] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
@@ -19,7 +20,10 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartData]);
 
- 
+  useEffect(() => {
+    setCartItems(cartData); // به‌روزرسانی cartItems هر بار که cartData تغییر کند
+  }, [cartData]);
+  
   const addToCart = (item) => {
     const existingProduct = cartData.find((product) => product.id === item._id);
     console.log("press add to cart");
@@ -32,6 +36,7 @@ export const CartProvider = ({ children }) => {
           : product
       );
       setCartData(updatedCart);
+      setCartItems(updatedCart);
     } else {
       
       const updatedCart = [
@@ -45,12 +50,13 @@ export const CartProvider = ({ children }) => {
         }, 
       ];
       setCartData(updatedCart);
+      setCartItems(updatedCart);
 
     }
   };
 
   return (
-    <CartContext.Provider value={{ cartData, addToCart }}>
+    <CartContext.Provider value={{ cartData, addToCart,cartItems}}>
       {children}
     </CartContext.Provider>
   );
