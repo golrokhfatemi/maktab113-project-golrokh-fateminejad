@@ -47,59 +47,41 @@ const Pagination = ({
   
     return (
       <div className="flex gap-x-4 mt-4 justify-center items-center">
+      
+      <Button
+        isDisabled={currentPage === 1} // استفاده از isDisabled برای غیر فعال کردن
+        onClick={() => onPageChange(currentPage - 1)}
+        leftIcon={<ArrowBackIcon />}
+        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} // استایل‌های حالت غیرفعال
+        _hover={{ bg: currentPage === 1 ? "gray.400" : "teal.600" }}
+        colorScheme="teal"
+      />
+
+      
+      {getPageNumber().map((page) => (
         <Button
-          className="px-3 py-1 rounded-lg bg-slate-300"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          rightIcon={<ArrowBackIcon />}
-        //   colorScheme='teal'
-          variant='solid'
-          sx={{
-            backgroundColor: "teal.400", 
-            color: "white", 
-            _hover: {
-              backgroundColor: "teal.600" 
-            }
-          }}
+          key={page}
+          onClick={() => typeof page === "number" && onPageChange(page)}
+          isDisabled={typeof page !== "number"}
+          variant="solid"
+          bg={currentPage === page ? "teal.600" : "teal.400"}
+          color="white"
+          _hover={{ bg: "teal.600" }}
         >
+          {page}
         </Button>
-        {getPageNumber().map((page) => (
-          <Button
-          sx={{
-            backgroundColor: "teal.400", 
-            color: "white", 
-            _hover: {
-              backgroundColor: "teal.600" 
-            }
-          }}
-            variant='solid'
-            className={`px-3 py-1 rounded-lg bg-slate-300 ${
-              currentPage === page ? "bg-slate-500" : ""
-            }`}
-            onClick={() => typeof page === "number" && onPageChange(page)}
-            disabled ={typeof page !== "number"}
-            key={page}
-          >
-            {page}
-          </Button>
-        ))}
-        <Button
-          className="px-3 py-1 rounded-lg bg-slate-300"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          rightIcon={<ArrowForwardIcon />}
-          sx={{
-            backgroundColor: "teal.400", 
-            color: "white", 
-            _hover: {
-              backgroundColor: "teal.600" 
-            }
-          }}
-          variant='solid'
-        >
-          
-        </Button>
-      </div>
+      ))}
+
+      {/* دکمه جلو */}
+      <Button
+        isDisabled={currentPage === totalPages} // استفاده از isDisabled برای غیر فعال کردن
+        onClick={() => onPageChange(currentPage + 1)}
+        rightIcon={<ArrowForwardIcon />}
+        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} // استایل‌های حالت غیرفعال
+        _hover={{ bg: currentPage === totalPages ? "gray.400" : "teal.600" }}
+        colorScheme="teal"
+      />
+    </div>
     );
   };
   
