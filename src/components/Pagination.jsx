@@ -72,12 +72,12 @@ const Pagination = ({
         </Button>
       ))}
 
-      {/* دکمه جلو */}
+      
       <Button
-        isDisabled={currentPage === totalPages} // استفاده از isDisabled برای غیر فعال کردن
+        isDisabled={currentPage === totalPages} 
         onClick={() => onPageChange(currentPage + 1)}
         rightIcon={<ArrowForwardIcon />}
-        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} // استایل‌های حالت غیرفعال
+        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} 
         _hover={{ bg: currentPage === totalPages ? "gray.400" : "teal.600" }}
         colorScheme="teal"
       />
