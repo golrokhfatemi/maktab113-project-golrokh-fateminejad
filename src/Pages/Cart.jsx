@@ -60,52 +60,92 @@ import {
     Image,
     Button,
     Box,
+    Flex,
+    Text,
+    IconButton,
+    Toast,
+    useToast,
   } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../Services/Context/Context";
 import { useNavigate} from "react-router-dom";
+import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
   
   const Cart = ({ isOpen, onClose}) => {
     const [cartItems, setCartItems] = useState([]);
     const {cartData , setCartData} = useContext(CartContext)
     const navigate = useNavigate()
+    const toast = useToast();
 
-//       // برای همگام‌سازی هر بار که cartData تغییر کرد
-//   useEffect(() => {
-//     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-//     setCartItems(storedCart);
-//   }, [cartData]);
+    useEffect(() => {
+        if (cartData && cartData.length > 0) {
+          setCartItems(cartData);
+        }
+      }, [cartData]);
 
-useEffect(() => {
+// useEffect(() => {
     
-    const handleStorageChange = () => {
-        // Fetch cart data from localStorage when the component mounts
-      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+//     const handleStorageChange = () => {
+//         // Fetch cart data from localStorage when the component mounts
+//       const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
       
-      setCartItems(storedCart);
-    //   setCartData(storedCart);
-    };
+//       setCartData(storedCart);
+//     //   setCartData(storedCart);
+//     };
   
-    // فراخوانی یک بار هنگام mount شدن کامپوننت
-    handleStorageChange();
+//     // فراخوانی یک بار هنگام mount شدن کامپوننت
+//     handleStorageChange();
   
-    // رویداد 'storage' برای شنیدن تغییرات در localStorage
-    window.addEventListener("storage", handleStorageChange);
+//     // رویداد 'storage' برای شنیدن تغییرات در localStorage
+//     window.addEventListener("storage", handleStorageChange);
   
-    // پاکسازی رویداد هنگام unmount شدن کامپوننت
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [setCartData]);
+//     // پاکسازی رویداد هنگام unmount شدن کامپوننت
+//     return () => {
+//       window.removeEventListener("storage", handleStorageChange);
+//     };
+//   }, [setCartData]);
+
+   // مدیریت تغییر تعداد محصول
+   const updateProductQuantity = (id, delta) => {
+    // console.log(cartData);
+    
+    const updatedCart = cartData
+      .map((item) =>
+        item.id === id
+          ? { ...item, count: Math.max(1, item.count + delta) } // جلوگیری از منفی شدن تعداد
+          : item
+      )
+      .filter((item) => item.count > 0); // حذف محصولاتی که تعدادشان صفر شده
+    setCartItems(updatedCart);
+    setCartData(updatedCart); // به‌روزرسانی state
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // ذخیره‌سازی در localStorage
+  };
+
+  // تابع برای حذف کالا از سبد خرید
+  const removeProductFromCart = (id) => {
+    const updatedCart = cartItems.filter((item) => item.id !== id); // حذف کالا با ID خاص
+    setCartItems(updatedCart); // به‌روزرسانی state داخلی
+    setCartData(updatedCart); // به‌روزرسانی context
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // ذخیره‌سازی در localStorage
+
+    toast({
+        title: "Removed from Cart",
+        description: "Item has been removed from your cart.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+  };
 
   const handleFinalizeCart = () => {
     onClose(); 
     navigate('/finalcartconfirm'); 
   };
 
-  
+  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.count, 0);
+
     return (
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Your Shopping Cart</ModalHeader>
@@ -126,15 +166,41 @@ useEffect(() => {
                 />
                 <div>
                   <p>{item.name}</p>
-                  <p>quantuty: {item.count}</p>
-                  <p>price: {item.price} $</p>
+                  
+                  <Flex alignItems="center">
+                    <Text mr={2}>Quantity:</Text>
+                    <IconButton
+                      icon={<MinusIcon />}
+                      onClick={() => updateProductQuantity(item.id, -1)}
+                      aria-label="Decrease quantity"
+                      size="sm"
+                      isDisabled={item.count === 1}
+                    />
+                    <Text mx={2}>{item.count}</Text>
+                    <IconButton
+                      icon={<AddIcon />}
+                      onClick={() => updateProductQuantity(item.id, 1)}
+                      aria-label="Increase quantity"
+                      size="sm"
+                    />
+                  </Flex>
+                  {/* <p>quantuty: {item.count}</p> */}
+                  <p>price:   {item.price * item.count}  $</p>
                 </div>
+                <IconButton
+                  icon={<DeleteIcon />}
+                  onClick={() => removeProductFromCart(item.id)}
+                  aria-label="Remove product"
+                  size="sm"
+                  colorScheme="red"
+                />
               </div>
             ))
             
           )}
-          <Box className=" flex justify-center">
-          <Button colorScheme="teal" onClick={handleFinalizeCart}>Finalize The Cart</Button>
+          <Box className=" flex justify-between">
+          <Box className="flex justify-center items-center">Total Price: {totalPrice.toFixed(2)} $</Box>
+          <Button colorScheme="teal" onClick={handleFinalizeCart}> Finalize The Cart </Button>
           </Box>
           
         </ModalBody>

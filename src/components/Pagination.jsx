@@ -49,10 +49,10 @@ const Pagination = ({
       <div className="flex gap-x-4 mt-4 justify-center items-center">
       
       <Button
-        isDisabled={currentPage === 1} // استفاده از isDisabled برای غیر فعال کردن
+        isDisabled={currentPage === 1} 
         onClick={() => onPageChange(currentPage - 1)}
         leftIcon={<ArrowBackIcon />}
-        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} // استایل‌های حالت غیرفعال
+        _disabled={{ bg: "gray.400", cursor: "not-allowed" }} 
         _hover={{ bg: currentPage === 1 ? "gray.400" : "teal.600" }}
         colorScheme="teal"
       />

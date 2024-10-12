@@ -36,13 +36,13 @@ export default function HomePage() {
   const products = productsData?.data?.products || [];
 
   const categorizedProducts = products.reduce((acc, item) => {
-    const category = item.category.name;
+    const category = item.category?.name;
 
-    // اگر دسته‌بندی موجود نیست، آن را اضافه می‌کنیم
+    
     if (!acc[category]) {
       acc[category] = [];
     }
-    // محصول را به دسته مربوطه اضافه می‌کنیم
+    
     acc[category].push(item);
     return acc;
   }, {});
@@ -112,7 +112,7 @@ export default function HomePage() {
       <div className="p-5">
         {Object.keys(categorizedProducts).map((category) => (
           <div key={category} className="mb-10">
-            <h2 className="text-2xl font-bold mb-4">{category || "null"}</h2>
+            <h2 className="text-2xl font-bold mb-4">{category || "Uncategorized"}</h2>
 
             <div className="grid grid-cols-3 gap-7">
               {categorizedProducts[category].map((item) => (

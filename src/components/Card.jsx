@@ -1,13 +1,18 @@
 import { Card, CardHeader, CardBody, CardFooter, Stack, Heading, Text, Button, Image, Divider, Flex, Spacer } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import DOMPurify from 'dompurify';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CartContext } from '../Services/Context/Context';
 
 export default function ProductCard({item}) {
   const cleanDescription = DOMPurify.sanitize(item.description, { ALLOWED_TAGS: [] });
   const { addToCart } = useContext(CartContext);
+  const [quantity, setQuantity] = useState(1);
 
+  const handleAddToCart = () => {
+    const productWithQuantity = { ...item, count: quantity }; // اصلاح به جای quantity از count
+    addToCart(productWithQuantity);
+  };
   // const handleAddToCart = (product) => {
   //   console.log("click button Add To Cart");
     
@@ -52,7 +57,7 @@ export default function ProductCard({item}) {
                 ${item.price}
               </Text>
               <Spacer />
-              <Button variant="solid" colorScheme="teal" onClick={() => addToCart(item)}>
+              <Button variant="solid" colorScheme="teal" onClick={handleAddToCart}>
                 Add To Cart
               </Button>
             </Flex>

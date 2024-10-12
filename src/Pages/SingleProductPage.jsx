@@ -12,6 +12,7 @@ import {
   CardBody,
   CardFooter,
   Divider,
+  Flex,
   Heading,
   Image,
   Stack,
@@ -24,10 +25,11 @@ export default function SingleProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
-    console.log("Product ID:", id);
+    // console.log("Product ID:", id);
 
     httpRequest
       .get(`/api/products/${id}`)
@@ -41,7 +43,7 @@ export default function SingleProductPage() {
       });
   }, [id]);
 
-  console.log(product);
+  // console.log(product);
 
   if (!product) {
     return <div>Loading...</div>;
@@ -66,6 +68,13 @@ export default function SingleProductPage() {
 
   const goToImage = (index) => {
     setCurrentImageIndex(index);
+  };
+
+  const handleAddToCart = () => {
+    addToCart({ ...product.data.product, count: quantity }); // افزودن به سبد خرید با مقدار شمارنده
+    console.log("quantity :" ,quantity);
+    
+    setQuantity(1); // بازنشانی شمارنده بعد از افزودن به سبد خرید
   };
 
   return (
@@ -110,12 +119,18 @@ export default function SingleProductPage() {
               <Text color="teal" fontSize="xl">
                 Price: $ {product.data.product.price}
               </Text>
+              <Flex alignItems="center">
+                <Button onClick={() => setQuantity((prev) => Math.max(1, prev - 1))} disabled={quantity === 1}>-</Button>
+                <Text mx={2}>{quantity}</Text>
+                <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
+              </Flex>
               <Button
                 colorScheme="teal"
                 size="lg"
-                onClick={() => addToCart(product.data.product)}
+                onClick={handleAddToCart}
               >
                 Add To Cart
+                
               </Button>
             </Box>
 
