@@ -19,14 +19,13 @@ import ProductCard from "../Components/Card";
 import { CartContext } from "../Services/Context/Context";
 
 export default function HomePage() {
-  const itemsPerPage = 4;
-  const [currentPage, setCurrentPage] = useState(1);
+  // const itemsPerPage = 4;
+  // const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory] = useOutletContext();
   const { data: productsData } = useGetProducts(
-    currentPage,
-    itemsPerPage,
-    selectedCategory
+    { itemsPerPage:99}
   );
+  
   const {addToCart} = useContext(CartContext)
   
   const [cartData, setCartData] = useState(() => {

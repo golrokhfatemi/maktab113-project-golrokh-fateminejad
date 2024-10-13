@@ -87,7 +87,7 @@ export default function Header({ setSelectedCategory }) {
     console.log(categoryId);
 
     setSelectedCategory(categoryId);
-    navigate(`?category=${categoryId}`);
+    navigate(`/?category=${categoryId}`);
     onClose();
   };
 

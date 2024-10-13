@@ -1,11 +1,16 @@
 import httpRequest from "../../../Services/http-request";
 
-export const getProducts = async (page = 1, itemsPerPage = 4, category) => {
-  const url = `/api/products?page=${page}&limit=${itemsPerPage}${
-    category && `&category=${category}`
-  }`;
-  // const url = `/api/products?page=${page}&limit=${itemsPerPage}${category ? `&category=${category}` : ''}`;
-
+export const getProducts = async ({page , itemsPerPage = 99, category}) => {
+  // const url = `/api/products?page=${page}&limit=${itemsPerPage}${
+  //   category && `&category=${category}`
+  // }`;
+  let url = `/api/products?${category ? `&category=${category}` : ''}`;
+if(page){
+  url+=`page=${page}`
+}
+if(itemsPerPage){
+  url+=`&limit=${itemsPerPage}`
+}
   const res = await httpRequest.get(url);
   // console.log(res.data);
   return res.data;

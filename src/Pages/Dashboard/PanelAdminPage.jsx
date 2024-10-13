@@ -39,7 +39,7 @@ export default function PanelAdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("");
   const itemsPerPage = 4;
-  const { data: productsData } = useGetProducts(currentPage, itemsPerPage);
+  const { data: productsData } = useGetProducts({page:currentPage, itemsPerPage});
   const { data: ordersData } = useGetOrders(currentPage, itemsPerPage);
   // console.log(productsData);
   // console.log(ordersData);
@@ -277,6 +277,37 @@ export default function PanelAdminPage() {
     setStatusModal(false);
     // setSelectedOrder(null);
   };
+
+  const handleDelivered = async (order) => {
+    console.log(order);
+    if (!order || !order._id) {
+      console.error("Order is undefined or invalid");
+      return;
+    }
+    
+    try {
+      const today = new Date();
+      const deliveryDate = today.toISOString().split('T')[0];
+  
+      const response = await httpRequest.patch(`/api/orders/${order._id}`, {
+        deliveryDate,
+        deliveryStatus: true,
+      });
+  
+      if (response.status === 200) {
+        
+        // اینجا باید سفارشات مجدد بارگذاری شوند
+        queryClient.invalidateQueries("orders");
+      }
+      setStatusModal(false);
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      alert("Failed to update order status.");
+    }
+    
+  };
+  
+  
 
   // const { data: usersData } = useGetUsers(currentPage, itemsPerPage);
   // console.log(usersData);
@@ -656,7 +687,7 @@ export default function PanelAdminPage() {
                 </tbody>
               </table>
               <div className="flex flex-row justify-evenly">
-                <button className="bg-slate-800 text-white px-3 py-2 rounded-md m-2">
+                <button className="bg-slate-800 text-white px-3 py-2 rounded-md m-2" onClick={() => handleDelivered(selectedOrder)}>
                   Delivered
                 </button>
                 <button
