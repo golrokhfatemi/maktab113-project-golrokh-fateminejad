@@ -92,8 +92,8 @@ export default function Header({ setSelectedCategory }) {
   };
 
   return (
-    <div className="px-10 py-5">
-      <header className="flex justify-between ">
+    <div className="px-10 py-5 ">
+      <header className="flex justify-between">
         <div className="flex flex-row gap-4">
           <CiMenuBurger
             className="text-2xl w-10 cursor-pointer"

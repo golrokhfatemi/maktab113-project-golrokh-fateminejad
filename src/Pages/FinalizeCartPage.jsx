@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import httpRequest from "../Services/http-request";
 import { CartContext } from "../Services/Context/Context";
 import Cookies from 'js-cookie'
+import { useNavigate } from "react-router-dom";
 
 export default function FinalizeCartPage() {
   const [firstName, setFirstName] = useState("");
@@ -12,6 +13,7 @@ export default function FinalizeCartPage() {
   const [address, setAddress] = useState("");
   const [mobile, setMobile] = useState("");
   const [deliveryDate, setDeliveryDate] = useState(""); 
+  const navigate = useNavigate()
   
   const [loading, setLoading] = useState(false);
   const { cartItems,setCartItems,setCartData } = useContext(CartContext);
@@ -81,6 +83,10 @@ const handleSubmit = (e) => {
         console.log('Order submitted successfully:', response.data);
         setCartData([]);
         setCartItems([]);
+        setTimeout(() => {
+            navigate("/payment");  // Navigate to payment page
+          }, 100); 
+        
         // localStorage.removeItem("cart");
       })
       .catch(error => {
@@ -92,8 +98,8 @@ const handleSubmit = (e) => {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   return (
-    <div className="flex justify-center items-start flex-col h-screen mx-20 gap-5">
-      <p className="font-semibold text-3xl">Finalize your cart</p>
+    <div className="flex justify-center items-start flex-col h-screen mx-20 gap-5 w-full">
+      
       <form
         onSubmit={handleSubmit}
         className="flex flex-col justify-start gap-5 bg-sky-950 text-white p-10 w-full rounded-3xl h-2/3"
@@ -135,7 +141,7 @@ const handleSubmit = (e) => {
             dateFormat="yyyy/MM/dd"
             placeholderText="Select delivery date"
             className="p-2 rounded-md bg-white text-black w-full"
-            minDate={tomorrow.setDate(tomorrow.getDate() + 1)} // تنظیم حداقل تاریخ برای فردا
+            minDate={tomorrow.setDate(tomorrow.getDate() + 1)} // set date in min for tomorrow
     
           />
         </Stack>
@@ -146,6 +152,8 @@ const handleSubmit = (e) => {
           className="p-6"
           type="submit"
           isLoading={loading}
+          
+          
         >
           Payment
         </Button>

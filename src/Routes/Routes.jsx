@@ -10,6 +10,8 @@ import UserLoginPage from "../Pages/UserLoginPage";
 import ProtectedRoute from "../Components/ProtectedRout";
 import SingleProductPage from "../Pages/SingleProductPage";
 import FinalizeCartPage from "../Pages/FinalizeCartPage";
+import PaymentPage from "../Pages/PaymentPage";
+import PaymentSuccessPage from "../Pages/PaymentSuccessPage";
 
 
 
@@ -53,12 +55,21 @@ const router = createBrowserRouter([
         path: "finalcartconfirm",
         element: <FinalizeCartPage />,
       },
+      {
+        path: "payment-success",
+        element: <PaymentSuccessPage />,
+      },
+      
     ],
   },
   {
     path: "/user-login",
     element:<UserLoginPage/>,
   },
+  {
+    path: "/payment",
+    element:<PaymentPage/>,
+  }
 ]);
   
 
