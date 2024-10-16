@@ -28,12 +28,12 @@ export default function Layout({ cartData, setCartData }) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header at the top */}
-      <header>
+      <header >
         <Header setSelectedCategory={setSelectedCategory} cartData={cartData} setCartData={setCartData} />
       </header>
 
       {/* Main content (Outlet) in the center */}
-      <main className="flex-grow flex justify-center items-center">
+      <main className="flex-grow flex justify-center items-start mt-20">
         <Outlet context={[selectedCategory]} />
       </main>
 

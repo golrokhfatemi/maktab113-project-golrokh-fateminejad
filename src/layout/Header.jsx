@@ -87,13 +87,15 @@ export default function Header({ setSelectedCategory }) {
     console.log(categoryId);
 
     setSelectedCategory(categoryId);
+    
+    
     navigate(`/?category=${categoryId}`);
     onClose();
   };
 
   return (
-    <div className="px-10 py-5 ">
-      <header className="flex justify-between">
+    <div className="fixed top-0 left-0 w-full  px-10 py-3 bg-[#e1eae5] z-10">
+      <header className="flex justify-between p-3 ">
         <div className="flex flex-row gap-4">
           <CiMenuBurger
             className="text-2xl w-10 cursor-pointer"

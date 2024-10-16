@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function PaymentSuccessPage() {
   return (
-    <div className='flex justify-center items-center flex-col'>
+    <div className='flex  flex-col '>
     {/* Image */}
     <img
         src="./images/images (1).png"

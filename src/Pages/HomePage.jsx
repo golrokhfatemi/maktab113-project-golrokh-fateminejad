@@ -14,39 +14,65 @@ import {
 } from "@chakra-ui/react";
 import { useGetProducts } from "../Hook/useGetProducts";
 import { useContext, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useLocation, useOutletContext } from "react-router-dom";
 import ProductCard from "../Components/Card";
 import { CartContext } from "../Services/Context/Context";
 
 export default function HomePage() {
   // const itemsPerPage = 4;
   // const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategory] = useOutletContext();
+  // const [selectedCategory] = useOutletContext();
+  const location = useLocation();
   const { data: productsData } = useGetProducts(
     { itemsPerPage:99}
   );
   
   const {addToCart} = useContext(CartContext)
   
-  const [cartData, setCartData] = useState(() => {
-    return JSON.parse(localStorage.getItem("cart")) || [];
-  });
+  // const [cartData, setCartData] = useState(() => {
+  //   return JSON.parse(localStorage.getItem("cart")) || [];
+  // });
 
   const products = productsData?.data?.products || [];
 
-  const categorizedProducts = products.reduce((acc, item) => {
-    const category = item.category?.name;
+   // Checking the URL and extracting the category parameter
+   const queryParams = new URLSearchParams(location.search);
+   const selectedCategoryId = queryParams.get("category");
 
+   // Filter products by category in URL
+  const categorizedProducts = products.reduce((acc, item) => {
+    const category = item.category?._id;
     
-    if (!acc[category]) {
-      acc[category] = [];
+    
+
+    // Checking if the selected category matches the product category
+    if (selectedCategoryId && category !== selectedCategoryId) {
+      return acc;
     }
-    
-    acc[category].push(item);
+
+    const categoryName = item.category?.name || "Uncategorized";
+
+    if (!acc[categoryName]) {
+      acc[categoryName] = [];
+    }
+
+    acc[categoryName].push(item);
     return acc;
   }, {});
 
-  // به‌روزرسانی سبد خرید
+  // const categorizedProducts = products.reduce((acc, item) => {
+  //   const category = item.category?.name;
+
+    
+  //   if (!acc[category]) {
+  //     acc[category] = [];
+  //   }
+    
+  //   acc[category].push(item);
+  //   return acc;
+  // }, {});
+
+ 
   // const addToCart = (item) => {
   //   const existingProduct = cartData.find((product) => product.id === item._id);
   //   console.log("press add to cart");
@@ -80,7 +106,7 @@ export default function HomePage() {
   // };
 
   return (
-    <div>
+    <div >
       <div
         className="m-5 rounded-xl"
         style={{
@@ -92,6 +118,7 @@ export default function HomePage() {
           padding: "0 50px",
           boxSizing: "border-box",
           position: "relative",
+          zIndex: 1
         }}
       >
         <div
