@@ -42,6 +42,10 @@ export default function HomePage() {
    // Filter products by category in URL
   const categorizedProducts = products.reduce((acc, item) => {
     const category = item.category?._id;
+    // console.log(category);
+    if (selectedCategoryId && category !== selectedCategoryId) {
+      return acc;
+    }
     
     
 
@@ -59,6 +63,8 @@ export default function HomePage() {
     acc[categoryName].push(item);
     return acc;
   }, {});
+  // console.log(categorizedProducts);
+  
 
   // const categorizedProducts = products.reduce((acc, item) => {
   //   const category = item.category?.name;
@@ -105,6 +111,8 @@ export default function HomePage() {
   //   }
   // };
 
+  
+
   return (
     <div >
       <div
@@ -136,7 +144,8 @@ export default function HomePage() {
         </div>
       </div>
       <div className="p-5">
-        {Object.keys(categorizedProducts).map((category) => (
+        {/* {Object.keys(categorizedProducts).map((category) => (
+          
           <div key={category} className="mb-10">
             <h2 className="text-2xl font-bold mb-4">{category || "Uncategorized"}</h2>
 
@@ -146,7 +155,27 @@ export default function HomePage() {
               ))}
             </div>
           </div>
-        ))}
+        ))} */}
+        {Object.keys(categorizedProducts).map((category) => {
+          const productsInCategory = categorizedProducts[category];
+
+          // Display all products if a category is selected, otherwise show only 3 random products
+          const displayedProducts = selectedCategoryId
+            ? productsInCategory // Show all products when a category is selected
+            : productsInCategory.sort(() => 0.5 - Math.random()).slice(0, 3); // Show 3 random products
+
+          return (
+            <div key={category} className="mb-10">
+              <h2 className="text-2xl font-bold mb-4">{category || "Uncategorized"}</h2>
+
+              <div className="grid grid-cols-3 gap-7">
+                {displayedProducts.map((item) => (
+                  <ProductCard key={item._id} item={item} addToCart={addToCart} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

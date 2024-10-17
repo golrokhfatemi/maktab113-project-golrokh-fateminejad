@@ -296,7 +296,7 @@ export default function PanelAdminPage() {
   
       if (response.status === 200) {
         
-        // اینجا باید سفارشات مجدد بارگذاری شوند
+        
         queryClient.invalidateQueries("orders");
       }
       setStatusModal(false);

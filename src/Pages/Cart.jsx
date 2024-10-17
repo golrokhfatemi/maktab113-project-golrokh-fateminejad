@@ -8,9 +8,9 @@
 //   const [cartDetails, setCartDetails] = useState([]);
 
 //   useEffect(() => {
-//     // اگر محصولات در سبد خرید وجود دارند
+//     
 //     if (productsInCart.length > 0) {
-//       // برای هر محصول در سبد خرید، جزئیات را از backend دریافت کنید
+//       
 //       const fetchCartDetails = async () => {
 //         try {
 //           const productIds = productsInCart.map(item => item.id);
@@ -18,7 +18,7 @@
 //             productIds,
 //           });
           
-//           // تنظیم جزئیات محصولات
+//         
 //           setCartDetails(response.data.products);
 //         } catch (error) {
 //           console.error("Error fetching cart details", error);
@@ -110,23 +110,41 @@ import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
     // console.log(cartData);
     
     const updatedCart = cartData
-      .map((item) =>
-        item.id === id
-          ? { ...item, count: Math.max(1, item.count + delta) } // جلوگیری از منفی شدن تعداد
-          : item
-      )
-      .filter((item) => item.count > 0); // حذف محصولاتی که تعدادشان صفر شده
+    
+      .map((item) => {
+        if (item.id === id) {
+          const newCount = item.count + delta;
+          
+          // جلوگیری از افزایش تعداد بیش از موجودی انبار
+          if (newCount > item.quantity) {
+            toast({
+              title: "Not enough in stock",
+              
+              status: "warning",
+              duration: 3000,
+              isClosable: true,
+            });
+            return item; // تعداد را تغییر نمی‌دهیم اگر از موجودی بیشتر باشد
+          }
+  
+          return { ...item, count: Math.max(1, newCount) }; // به‌روزرسانی تعداد اگر در محدوده‌ی مجاز باشد
+        }
+        return item;
+      })
+      .filter((item) => item.count > 0); // حذف محصولات با تعداد صفر
+  
     setCartItems(updatedCart);
-    setCartData(updatedCart); // به‌روزرسانی state
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // ذخیره‌سازی در localStorage
+    setCartData(updatedCart); 
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); 
   };
+  
 
-  // تابع برای حذف کالا از سبد خرید
+ 
   const removeProductFromCart = (id) => {
-    const updatedCart = cartItems.filter((item) => item.id !== id); // حذف کالا با ID خاص
-    setCartItems(updatedCart); // به‌روزرسانی state داخلی
-    setCartData(updatedCart); // به‌روزرسانی context
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // ذخیره‌سازی در localStorage
+    const updatedCart = cartItems.filter((item) => item.id !== id); 
+    setCartItems(updatedCart); 
+    setCartData(updatedCart); 
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); 
 
     toast({
         title: "Removed from Cart",

@@ -23,7 +23,7 @@ export const CartProvider = ({ children }) => {
   }, [cartData]);
 
   useEffect(() => {
-    setCartItems(cartData); // به‌روزرسانی cartItems هر بار که cartData تغییر کند
+    setCartItems(cartData); 
   }, [cartData]);
 
   const addToCart = (item) => {
@@ -57,6 +57,8 @@ export const CartProvider = ({ children }) => {
           count: item.count ,
           thumbnail: item.thumbnail,
           price: item.price,
+          quantity : item.quantity
+          
         }, 
       ];
       setCartData(updatedCart);
