@@ -72,8 +72,8 @@ export default function SingleProductPage() {
 
   const handleAddToCart = () => {
     addToCart({ ...product.data.product, count: quantity }); // افزودن به سبد خرید با مقدار شمارنده
-    console.log("quantity :" ,quantity);
-    
+    console.log("quantity :", quantity);
+
     setQuantity(1); // بازنشانی شمارنده بعد از افزودن به سبد خرید
   };
 
@@ -120,33 +120,49 @@ export default function SingleProductPage() {
                 Price: $ {product.data.product.price}
               </Text>
               <Flex alignItems="center">
-                <Button onClick={() => setQuantity((prev) => Math.max(1, prev - 1))} disabled={quantity === 1}>-</Button>
+                <Button
+                  onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                  disabled={quantity === 1}
+                >
+                  -
+                </Button>
                 <Text mx={2}>{quantity}</Text>
-                <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
+                <Button
+                  onClick={() =>
+                    setQuantity((prev) => {
+                      if (prev < product.data.product.quantity) {
+                        return prev + 1;
+                      } else {
+                        return prev;
+                      }
+                    })
+                  }
+                  disabled={quantity >= product.data.product.quantity}
+                >
+                  +
+                </Button>
               </Flex>
-              <Button
-                colorScheme="teal"
-                size="lg"
-                onClick={handleAddToCart}
-              >
+              <Button colorScheme="teal" size="lg" onClick={handleAddToCart}>
                 Add To Cart
-                
               </Button>
             </Box>
 
             <Box className="felx flex-col">
-              {/* اضافه کردن کلاس‌های flex برای والد تصویر */}
               <Box className="flex items-center justify-center p-7">
-                <button onClick={handlePrev} className="p-5">{"<"}</button>
+                <button onClick={handlePrev} className="p-5">
+                  {"<"}
+                </button>
                 <Image
                   width={600}
                   height={400}
                   src={`http://${images[currentImageIndex]}`}
                   borderRadius="lg"
                 />
-                <button onClick={handleNext} className="p-5">{">"}</button>
+                <button onClick={handleNext} className="p-5">
+                  {">"}
+                </button>
               </Box>
-              {/* نقاط زیر تصویر (Indicators) */}
+
               <Box display="flex" mt={4} justifyContent="center" gap={2}>
                 {images.map((_, index) => (
                   <Box
@@ -155,13 +171,12 @@ export default function SingleProductPage() {
                     height={3}
                     borderRadius="50%"
                     bg={index === currentImageIndex ? "teal" : "gray"}
-                    onClick={() => goToImage(index)} // تغییر به تصویر مربوطه
+                    onClick={() => goToImage(index)}
                     cursor="pointer"
                   />
                 ))}
               </Box>
 
-              {/* نمایش تصاویر کوچک زیر عکس اصلی */}
               <Box display="flex" mt={4} justifyContent="center" gap={2}>
                 {images.map((img, index) => (
                   <Image
@@ -172,9 +187,9 @@ export default function SingleProductPage() {
                     borderRadius="lg"
                     border={
                       index === currentImageIndex ? "2px solid teal" : "none"
-                    } // هایلایت عکس فعلی
+                    }
                     cursor="pointer"
-                    onClick={() => goToImage(index)} // تغییر به تصویر مربوطه
+                    onClick={() => goToImage(index)}
                   />
                 ))}
               </Box>

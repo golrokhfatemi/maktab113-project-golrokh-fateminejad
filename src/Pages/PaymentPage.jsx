@@ -23,7 +23,7 @@ export default function PaymentPage() {
   // Handles cancellation
   const handleCancel = () => {
     console.log("Payment cancelled");
-    navigate("/");  // Redirect back to cart or another page
+    navigate("/payment-fail");  // Redirect back to cart or another page
   };
 
   return   (

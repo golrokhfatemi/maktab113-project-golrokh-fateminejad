@@ -86,14 +86,14 @@ import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
 
 
   
-   const updateProductQuantity = (id, delta) => {
+   const updateProductQuantity = (id, x) => {
     // console.log(cartData);
     
     const updatedCart = cartData
     
       .map((item) => {
         if (item.id === id) {
-          const newCount = item.count + delta;
+          const newCount = item.count + x;
           
           // Avoid increasing the number of warehouse inventory
           if (newCount > item.quantity) {

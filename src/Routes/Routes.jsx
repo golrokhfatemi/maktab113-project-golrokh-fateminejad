@@ -12,6 +12,7 @@ import SingleProductPage from "../Pages/SingleProductPage";
 import FinalizeCartPage from "../Pages/FinalizeCartPage";
 import PaymentPage from "../Pages/PaymentPage";
 import PaymentSuccessPage from "../Pages/PaymentSuccessPage";
+import PaymentFailPage from "../Pages/PaymentFailPage";
 
 
 
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "payment-success",
         element: <PaymentSuccessPage />,
+      },
+      {
+        path: "payment-fail",
+        element: <PaymentFailPage />,
       },
       
     ],

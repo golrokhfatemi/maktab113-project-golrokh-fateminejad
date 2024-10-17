@@ -504,18 +504,7 @@ export default function PanelAdminPage() {
           </TabPanel>
           <TabPanel>
             <Stack direction="row" spacing={4} m={10}>
-              {/* <Checkbox
-                isChecked={filters.delivered}
-                onChange={() => handleFilterChange("delivered")}
-              >
-                Delivered
-              </Checkbox>
-              <Checkbox
-                isChecked={filters.inProcces}
-                onChange={() => handleFilterChange("inProcces")}
-              >
-                In Process
-              </Checkbox> */}
+              
               <RadioGroup>
                 <Stack spacing={5} direction="row">
                   <Radio value="all" onChange={() => handleFilterChange("all")}>
@@ -528,6 +517,7 @@ export default function PanelAdminPage() {
                   >
                     Delivered
                   </Radio>
+                  
                   <Radio
                     value="inProcces"
                     isChecked={filters.inProcces}

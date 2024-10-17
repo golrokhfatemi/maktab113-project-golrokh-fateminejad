@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useGetProducts } from "../Hook/useGetProducts";
 import { useContext, useState } from "react";
-import { Link, useLocation, useOutletContext } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import ProductCard from "../Components/Card";
 import { CartContext } from "../Services/Context/Context";
 
