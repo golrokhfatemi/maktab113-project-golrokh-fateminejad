@@ -83,29 +83,9 @@ import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
         }
       }, [cartData]);
 
-// useEffect(() => {
-    
-//     const handleStorageChange = () => {
-//         // Fetch cart data from localStorage when the component mounts
-//       const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-      
-//       setCartData(storedCart);
-//     //   setCartData(storedCart);
-//     };
-  
-//     // فراخوانی یک بار هنگام mount شدن کامپوننت
-//     handleStorageChange();
-  
-//     // رویداد 'storage' برای شنیدن تغییرات در localStorage
-//     window.addEventListener("storage", handleStorageChange);
-  
-//     // پاکسازی رویداد هنگام unmount شدن کامپوننت
-//     return () => {
-//       window.removeEventListener("storage", handleStorageChange);
-//     };
-//   }, [setCartData]);
 
-   // مدیریت تغییر تعداد محصول
+
+  
    const updateProductQuantity = (id, delta) => {
     // console.log(cartData);
     
@@ -115,7 +95,7 @@ import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
         if (item.id === id) {
           const newCount = item.count + delta;
           
-          // جلوگیری از افزایش تعداد بیش از موجودی انبار
+          // Avoid increasing the number of warehouse inventory
           if (newCount > item.quantity) {
             toast({
               title: "Not enough in stock",
@@ -124,14 +104,14 @@ import { AddIcon, DeleteIcon, MinusIcon } from "@chakra-ui/icons";
               duration: 3000,
               isClosable: true,
             });
-            return item; // تعداد را تغییر نمی‌دهیم اگر از موجودی بیشتر باشد
+            return item; 
           }
   
-          return { ...item, count: Math.max(1, newCount) }; // به‌روزرسانی تعداد اگر در محدوده‌ی مجاز باشد
+          return { ...item, count: Math.max(1, newCount) }; 
         }
         return item;
       })
-      .filter((item) => item.count > 0); // حذف محصولات با تعداد صفر
+      .filter((item) => item.count > 0); 
   
     setCartItems(updatedCart);
     setCartData(updatedCart); 
