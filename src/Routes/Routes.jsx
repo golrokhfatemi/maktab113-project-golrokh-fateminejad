@@ -13,6 +13,7 @@ import FinalizeCartPage from "../Pages/FinalizeCartPage";
 import PaymentPage from "../Pages/PaymentPage";
 import PaymentSuccessPage from "../Pages/PaymentSuccessPage";
 import PaymentFailPage from "../Pages/PaymentFailPage";
+import UserRegisterPage from "../Pages/userRegisterPage";
 
 
 
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
   {
     path: "/user-login",
     element:<UserLoginPage/>,
+  },
+  {
+    path: "/user-register",
+    element:<UserRegisterPage/>,
   },
   {
     path: "/payment",
