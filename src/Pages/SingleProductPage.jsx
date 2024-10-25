@@ -49,17 +49,17 @@ export default function SingleProductPage() {
     return <div>Loading...</div>;
   }
 
-  const images = product.data.product.images; // دریافت تصاویر
+  const images = product.data.product.images; 
   const totalImages = images.length;
 
-  // فانکشن برای رفتن به تصویر بعدی
+  
   const handleNext = () => {
     setCurrentImageIndex((prevIndex) =>
       prevIndex === totalImages - 1 ? 0 : prevIndex + 1
     );
   };
 
-  // فانکشن برای رفتن به تصویر قبلی
+  
   const handlePrev = () => {
     setCurrentImageIndex((prevIndex) =>
       prevIndex === 0 ? totalImages - 1 : prevIndex - 1
@@ -71,10 +71,10 @@ export default function SingleProductPage() {
   };
 
   const handleAddToCart = () => {
-    addToCart({ ...product.data.product, count: quantity }); // افزودن به سبد خرید با مقدار شمارنده
+    addToCart({ ...product.data.product, count: quantity }); 
     console.log("quantity :", quantity);
 
-    setQuantity(1); // بازنشانی شمارنده بعد از افزودن به سبد خرید
+    setQuantity(1);
   };
 
   return (

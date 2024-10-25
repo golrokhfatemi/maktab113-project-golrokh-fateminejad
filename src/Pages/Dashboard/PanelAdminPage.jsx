@@ -95,7 +95,7 @@ export default function PanelAdminPage() {
   });
 
   const handleEditClick = (item, field) => {
-    // برای ذخیره فیلد در حال ویرایش
+    
     setEditingFields((prev) => ({
       ...prev,
       [item._id]: {

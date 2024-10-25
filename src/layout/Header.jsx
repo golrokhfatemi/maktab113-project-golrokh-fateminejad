@@ -20,6 +20,8 @@ import {
   PopoverHeader,
   PopoverBody,
   Badge,
+  Button,
+  LinkBox,
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
@@ -28,6 +30,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { FiShoppingCart } from "react-icons/fi";
 import Cart from "../Pages/Cart";
 import { CartContext } from "../Services/Context/Context";
+import { FaRegUser } from "react-icons/fa";
 
 export default function Header({ setSelectedCategory }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -36,7 +39,7 @@ export default function Header({ setSelectedCategory }) {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [cartIsOpen, setCartIsOpen] = useState(false);
   // const [cartData, setCartData] = useState([]);
-  const{cartData ,setCartData} = useContext(CartContext)
+  const { cartData, setCartData } = useContext(CartContext);
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
   const btnRef = React.useRef();
@@ -87,20 +90,27 @@ export default function Header({ setSelectedCategory }) {
     console.log(categoryId);
 
     setSelectedCategory(categoryId);
-    
-    
+
     navigate(`/?category=${categoryId}`);
     onClose();
   };
+  const handleUserLogin = () =>{
+    navigate("/user-login")
+  }
+
+  const handlePanelAdmin = () =>{
+    navigate("/panel-admin")
+  }
 
   return (
     <div className="fixed top-0 left-0 w-full  px-10 py-3 bg-[#e1eae5] z-10">
-      <header className="flex justify-between p-3 ">
+      <header className="flex justify-between p-3 items-center">
         <div className="flex flex-row gap-4">
           <CiMenuBurger
             className="text-2xl w-10 cursor-pointer"
             onClick={onOpen}
           />
+
           <p>Menu</p>
         </div>
         <Link href="/">
@@ -109,7 +119,7 @@ export default function Header({ setSelectedCategory }) {
           </div>
         </Link>
 
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-4 items-center">
           <Popover
             isOpen={isPopoverOpen}
             onOpen={() => setIsPopoverOpen(true)}
@@ -121,27 +131,20 @@ export default function Header({ setSelectedCategory }) {
             </PopoverTrigger>
             {/* <FiShoppingCart className="text-2xl cursor-pointer"  onClick={() => setCartIsOpen(true)}/> */}
             <Box position="relative" display="inline-block">
-              
-                
-                  <FiShoppingCart
-                  backgroundColor="none"
-                    className="text-2xl cursor-pointer "
-                    onClick={() => setCartIsOpen(true)}
-                  />
-                  
-                
-                
-              
+              <FiShoppingCart
+                backgroundColor="none"
+                className="text-2xl cursor-pointer "
+                onClick={() => setCartIsOpen(true)}
+              />
+
               {cartCount > 0 && (
                 <Badge
-                  
                   borderRadius="full"
                   position="absolute"
                   top="-2"
                   right="-4"
                   fontSize="0.8em"
                   backgroundColor="#a2dbcc"
-                  
                 >
                   {cartCount}
                 </Badge>
@@ -161,6 +164,15 @@ export default function Header({ setSelectedCategory }) {
                 </Box>
               </PopoverBody>
             </PopoverContent>
+            <FaRegUser className="text-xl cursor-pointer " onClick={handleUserLogin} />
+            <Button
+              colorScheme="black"
+              variant="outline"
+              onClick={handlePanelAdmin}
+             
+            >
+              Panel admin
+            </Button>
           </Popover>
 
           {/* <MdOutlineMail className="text-2xl cursor-pointer" /> */}
